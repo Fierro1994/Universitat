@@ -24,9 +24,9 @@
 
 ## Установка и запуск
 1. Клонируйте репозиторий:
-   git clone https://github.com/your-username/university.git
-
-2. Запустите   
+   git clone
+   
+3. Запустите   
 
 ## Использование
 
