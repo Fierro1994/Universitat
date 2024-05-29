@@ -1,7 +1,5 @@
 package org.example.Dao.interfaceDao;
 
-import org.example.models.Course;
-
 import java.util.Optional;
 import java.util.Set;
 

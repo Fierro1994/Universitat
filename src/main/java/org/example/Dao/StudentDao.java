@@ -3,7 +3,6 @@ package org.example.Dao;
 import org.example.Dao.interfaceDao.CrudDao;
 import org.example.models.Course;
 import org.example.models.Student;
-import org.example.service.DBConnector;
 
 import java.sql.*;
 import java.util.*;

@@ -1,7 +1,5 @@
 package org.example.service;
 
-import com.sun.jdi.connect.Connector;
-
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -17,13 +15,13 @@ public class CreateDBAndDTO {
 
 
     public void createDataBase() {
-        Statement statement = null;
+        Statement statement;
         try {
             statement = connection.createStatement();
             statement.execute(SQL_DROP_DB);
 
         } catch (SQLException ex) {
-            System.out.println(ex.getMessage().toString());
+            ex.printStackTrace();
         }
 
         String initSQL = "USE dbmelody;";
@@ -70,7 +68,7 @@ public class CreateDBAndDTO {
             statement.execute(SQLStudentsCourses);
             statement.execute(SQLOneToManyTeacherCourses);
         } catch (SQLException ex) {
-            System.out.println(ex.getMessage().toString());
+            ex.printStackTrace();
         }
     }
 }

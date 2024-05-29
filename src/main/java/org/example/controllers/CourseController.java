@@ -1,7 +1,6 @@
 package org.example.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.example.Dao.StudentDao;
 import org.example.dto.CourseDto;
 import org.example.service.CourseService;
 import java.io.BufferedReader;
@@ -35,14 +34,14 @@ public class CourseController extends HttpServlet {
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws  IOException {
         request.setCharacterEncoding("UTF-8");
         response.setContentType("application/json; charset=UTF-8");
         response.setCharacterEncoding("UTF-8");
         PrintWriter out = response.getWriter();
         String pathParam = request.getServletPath();
         Long id =Long.parseLong(request.getParameter("id"));
-        CourseDto courseDto = new CourseDto();
+        CourseDto courseDto;
         switch (pathParam) {
             case  "/getCourse":
                 Map<Integer, CourseDto> responseMap = courseService.getCourse(id);
@@ -58,7 +57,7 @@ public class CourseController extends HttpServlet {
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws  IOException {
         request.setCharacterEncoding("UTF-8");
         response.setContentType("application/json; charset=UTF-8");
         response.setCharacterEncoding("UTF-8");
@@ -81,7 +80,7 @@ public class CourseController extends HttpServlet {
         out.close();
 
     }
-    public void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public void doPut(HttpServletRequest request, HttpServletResponse response) throws IOException {
         request.setCharacterEncoding("UTF-8");
         response.setContentType("application/json; charset=UTF-8");
         response.setCharacterEncoding("UTF-8");
@@ -108,7 +107,7 @@ public class CourseController extends HttpServlet {
 
     }
 
-    public void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public void doDelete(HttpServletRequest request, HttpServletResponse response) throws IOException {
         request.setCharacterEncoding("UTF-8");
         response.setContentType("application/json; charset=UTF-8");
         response.setCharacterEncoding("UTF-8");
