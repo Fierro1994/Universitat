@@ -226,9 +226,10 @@ public class CourseDao implements CrudDao<Course> {
 
     private void checkAndUpdateStudentCourse(Student student, Course course) {
         try {
-            String query = "SELECT COUNT(*) FROM students_and_courses WHERE student_id = ?";
+            String query = "SELECT COUNT(*) FROM students_and_courses WHERE student_id = ? and course_id = ?";
             PreparedStatement statement = connection.prepareStatement(query);
             statement.setLong(1, student.getId());
+            statement.setLong(2, course.getId());
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next() && (resultSet.getInt(1) > 0)) {
                 updateStudentCourse(student, course);
@@ -237,6 +238,7 @@ public class CourseDao implements CrudDao<Course> {
             e.printStackTrace();
         }
     }
+
     private void updateStudentCourse(Student student, Course course) {
         try {
             String query = "UPDATE students_and_courses SET student_id = ?, course_id = ? WHERE student_id = ? AND course_id = ?";

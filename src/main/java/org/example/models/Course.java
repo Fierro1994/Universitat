@@ -12,12 +12,6 @@ public class Course {
     public Course() {
     }
 
-    public Course(String name, Set<Student> students, Teacher teacher) {
-        this.name = name;
-        this.students = students;
-        this.teacher = teacher;
-    }
-
     public Course(String name) {
         this.name = name;
     }
@@ -54,21 +48,4 @@ public class Course {
         this.teacher = teacher;
     }
 
-    @Override
-    public String toString() {
-        Set<String> studentsNameList = new HashSet<>();
-        String teacherName = "";
-        if (students !=null){
-            students.forEach(e-> studentsNameList.add((e.getName())));
-        }
-        if (teacher != null){
-            teacherName = teacher.getName();
-        }
-        return "Course{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", students=" + studentsNameList +
-                ", teacher=" + teacherName +
-                '}';
-    }
 }

@@ -17,13 +17,8 @@ public class CourseDto {
     public CourseDto() {
     }
 
-    public CourseDto(String name, Set<Student> students, Teacher teacher) {
-        this.name = name;
-        this.students = students;
-        this.teacher = teacher;
-    }
-
     public CourseDto(String name) {
+        this.name = name;
     }
 
     public Long getId() {
@@ -54,7 +49,7 @@ public class CourseDto {
         return teacher;
     }
 
-    public void setTeacherDto(Teacher teacher) {
+    public void setTeacher(Teacher teacher) {
         this.teacher = teacher;
     }
     @Override

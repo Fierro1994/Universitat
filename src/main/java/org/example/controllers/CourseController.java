@@ -1,12 +1,13 @@
 package org.example.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.example.Dao.StudentDao;
 import org.example.dto.CourseDto;
-import org.example.dto.StudentDto;
 import org.example.service.CourseService;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.Connection;
 import java.util.Map;
 import java.util.stream.Collectors;
 import javax.servlet.ServletException;
@@ -24,9 +25,13 @@ import javax.servlet.http.HttpServletResponse;
                 "/getCourse"
         })
 public class CourseController extends HttpServlet {
+    private Connection connection;
+    private CourseService courseService;
 
-    private CourseService courseService = new CourseService();
-
+    public CourseController(Connection connection) {
+        this.connection = connection;
+        courseService = new CourseService(connection);
+    }
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -43,10 +48,11 @@ public class CourseController extends HttpServlet {
                 Map<Integer, CourseDto> responseMap = courseService.getCourse(id);
                 response.setStatus(responseMap.entrySet().stream().findFirst().get().getKey());
                 courseDto = responseMap.entrySet().stream().findFirst().get().getValue();
+                out.print(courseDto.toString());
+                out.flush();
+                out.close();
         }
-        out.println(courseDto);
-        out.flush();
-        out.close();
+
     }
 
 
@@ -70,12 +76,12 @@ public class CourseController extends HttpServlet {
                 response.setStatus(responseMap.entrySet().stream().findFirst().get().getKey());
                 courseDto = responseMap.entrySet().stream().findFirst().get().getValue();
         }
-        out.println(courseDto);
+        out.println(courseDto.toString());
         out.flush();
         out.close();
 
     }
-    protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
         response.setContentType("application/json; charset=UTF-8");
         response.setCharacterEncoding("UTF-8");
@@ -102,7 +108,7 @@ public class CourseController extends HttpServlet {
 
     }
 
-    protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
         response.setContentType("application/json; charset=UTF-8");
         response.setCharacterEncoding("UTF-8");
@@ -114,7 +120,7 @@ public class CourseController extends HttpServlet {
             case  "/removeCourse":
                 jsonResponse = courseService.removeCourse(id);
         }
-        out.println(jsonResponse);
+        out.print(jsonResponse);
         out.flush();
         out.close();
 

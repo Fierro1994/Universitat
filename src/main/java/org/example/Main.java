@@ -38,6 +38,14 @@ public class Main {
         student.setCourses(courses);
         studentDao.save(student);
         studentDao.save(student2);
+        courseDao.update(course);
+        student.setCourses(courses);
+        studentDao.update(student);
+        Set<Student> students = new HashSet<>();
+        students.add(student);
+        students.add(student2);
+        course.setStudents(students);
+        courseDao.update(course);
 
         Optional<Student> result = studentDao.getById(student.getId());
         Optional<Student> result2 = studentDao.getById(student2.getId());

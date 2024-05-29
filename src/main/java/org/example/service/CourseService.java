@@ -6,27 +6,21 @@ import org.example.mappers.CourseMapper;
 import org.example.models.Course;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.sql.SQLException;
+import java.sql.Connection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
 public class CourseService {
-    private DBConnector dbConnector = new DBConnector();
-    private final CourseDao courseDao;
 
-    {
-        try {
-            courseDao = new CourseDao(dbConnector.getConnection());
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
+    private Connection connection;
+    private CourseDao courseDao;
+
+    public CourseService(Connection connection) {
+        this.connection = connection;
+        courseDao = new CourseDao(connection);
     }
-
-    private final TeacherService teacherService = new TeacherService();
 
     public   Map<Integer, CourseDto> getCourse(Long id) {
         Map<Integer, CourseDto> jsonResponse = new HashMap<>();

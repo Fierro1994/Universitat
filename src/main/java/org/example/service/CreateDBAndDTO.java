@@ -16,7 +16,7 @@ public class CreateDBAndDTO {
     }
 
 
-    public void createDataBase() throws SQLException, ClassNotFoundException {
+    public void createDataBase() {
         Statement statement = null;
         try {
             statement = connection.createStatement();

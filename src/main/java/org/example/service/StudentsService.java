@@ -7,24 +7,19 @@ import org.example.models.Student;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.*;
 
 public class StudentsService {
-    DBConnector dbConnector = new DBConnector();
+    private Connection connection;
 
     private final StudentDao studentDao;
-    {
-        try {
-            studentDao = new StudentDao(dbConnector.getConnection());
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
+
+    public StudentsService(Connection connection) {
+        this.connection = connection;
+        studentDao = new StudentDao(connection);
     }
-
-
     public Map<Integer, StudentDto> getStudent(Long id) {
         Map<Integer, StudentDto> jsonResponse = new HashMap<>();
         StudentDto studentDto = new StudentDto();

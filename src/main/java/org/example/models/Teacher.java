@@ -13,12 +13,6 @@ public class Teacher {
     public Teacher() {
     }
 
-    public Teacher(String email, String name, Set<Course> courses) {
-        this.email = email;
-        this.name = name;
-        this.courses = courses;
-    }
-
     public Teacher(String email,String name) {
         this.email = email;
         this.name = name;
@@ -56,17 +50,4 @@ public class Teacher {
         this.courses = courses;
     }
 
-    @Override
-    public String toString() {
-        Set<String> coursesNameList = new HashSet<>();
-        if (courses != null){
-            courses.forEach(e-> coursesNameList.add((e.getName())));
-        }
-        return "Teacher{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", email='" + email + '\'' +
-                ", courses=" + coursesNameList +
-                '}';
-    }
 }

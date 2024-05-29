@@ -230,34 +230,14 @@ private Optional<Course> getCourseById(long courseId) throws SQLException {
             statement.setLong(1, student.getId());
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next() && resultSet.getInt(1) == 0) {
-                // This is the first time the student is being added to the courses
                 for (Course course : courses) {
                     addStudentCourse(student, course);
-                }
-            } else {
-                // The student already exists in the courses table
-                for (Course course : courses) {
-                    updateStudentCourse(student, course);
                 }
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-    }
-
-    private void updateStudentCourse(Student student, Course course) {
-        try {
-            String query = "UPDATE students_and_courses SET student_id = ?, course_id = ? WHERE student_id = ? AND course_id = ?";
-            PreparedStatement statement = connection.prepareStatement(query);
-            statement.setLong(1, student.getId());
-            statement.setLong(2, course.getId());
-            statement.setLong(3, student.getId());
-            statement.setLong(4, course.getId());
-            statement.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
     }
 
     private void addStudentCourse(Student student, Course course) {

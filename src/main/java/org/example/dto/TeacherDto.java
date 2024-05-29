@@ -7,11 +7,17 @@ import java.util.Set;
 
 public class TeacherDto {
     private Long id;
+    private String email;
     private String name;
     @JsonProperty("courses")
     private Set<Course> courses;
 
     public TeacherDto() {
+    }
+
+    public TeacherDto(String email, String name) {
+        this.email = email;
+        this.name = name;
     }
 
     public Long getId() {
@@ -20,6 +26,14 @@ public class TeacherDto {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getName() {

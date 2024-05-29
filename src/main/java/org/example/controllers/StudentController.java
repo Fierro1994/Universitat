@@ -7,6 +7,7 @@ import org.example.service.StudentsService;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.Connection;
 import java.util.Map;
 import java.util.stream.Collectors;
 import javax.servlet.ServletException;
@@ -25,11 +26,15 @@ import javax.servlet.http.HttpServletResponse;
         })
 public class StudentController extends HttpServlet {
 
-    private final StudentsService studentsService = new StudentsService();
-
+    private Connection connection;
+    private StudentsService studentsService;
+    public StudentController(Connection connection) {
+        this.connection = connection;
+        studentsService = new StudentsService(connection);
+    }
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+    public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
         response.setContentType("application/json; charset=UTF-8");
@@ -44,14 +49,14 @@ public class StudentController extends HttpServlet {
                 response.setStatus(responseMap.entrySet().stream().findFirst().get().getKey());
                 studentDto = responseMap.entrySet().stream().findFirst().get().getValue();
         }
-        out.println(studentDto);
+        out.print(studentDto.toString());
         out.flush();
         out.close();
     }
 
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
         response.setContentType("application/json; charset=UTF-8");
@@ -75,7 +80,7 @@ public class StudentController extends HttpServlet {
 
     }
 
-    protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
         response.setContentType("application/json; charset=UTF-8");
         response.setCharacterEncoding("UTF-8");
@@ -97,7 +102,7 @@ public class StudentController extends HttpServlet {
 
     }
 
-    protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
         response.setContentType("application/json; charset=UTF-8");
         response.setCharacterEncoding("UTF-8");
@@ -109,7 +114,7 @@ public class StudentController extends HttpServlet {
             case "/removeStudent":
                 jsonResponse = studentsService.removeStudent(id);
         }
-        out.println(jsonResponse);
+        out.print(jsonResponse);
         out.flush();
         out.close();
 

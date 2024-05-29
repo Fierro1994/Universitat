@@ -78,7 +78,6 @@ public class DaoTest {
         student.setCourses(courses);
         studentDao.save(student);
         studentDao.save(student2);
-
         Optional<Student> result = studentDao.getById(student.getId());
         Optional<Student> result2 = studentDao.getById(student2.getId());
 
@@ -203,6 +202,7 @@ public class DaoTest {
         Set<Student> students = new HashSet<>();
         students.add(student);
         students.add(student2);
+        students.add(student);
         course.setTeacher(teacher);
         course.setStudents(students);
 
@@ -242,6 +242,10 @@ public class DaoTest {
         course.setTeacher(teacher);
         course.setStudents(students);
         courseDao.update(course);
+        students.add(student);
+        course.setStudents(students);
+        courseDao.update(course);
+
         Optional<Course> result2 = courseDao.getById(course.getId());
 
         assertTrue(result.isPresent());
@@ -310,8 +314,9 @@ public class DaoTest {
         courseDao.save(course);
         courseDao.save(course1);
         Set<Course> courses = new HashSet<>();
+        courses.add(course);
+        courses.add(course1);
         teacher.setCourses(courses);
-        teacher2.setCourses(courses);
         teacherDao.save(teacher);
         teacherDao.save(teacher1);
         teacherDao.save(teacher2);

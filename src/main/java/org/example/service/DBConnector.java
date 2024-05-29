@@ -15,10 +15,23 @@ public class DBConnector {
     private  String password = databaseProperties.getProperty("db.password");
 
 
-    public Connection getConnection() throws SQLException, ClassNotFoundException {
-        Class.forName(driver);
-        Connection connection = DriverManager.getConnection(url, username, password);
-        connection.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+    public Connection getConnection() {
+        try {
+            Class.forName(driver);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        Connection connection = null;
+        try {
+            connection = DriverManager.getConnection(url, username, password);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        try {
+            connection.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
         return connection;
     }
 
