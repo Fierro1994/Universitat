@@ -25,8 +25,6 @@ import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
-
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
@@ -37,11 +35,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-
 import static org.mockito.Mockito.*;
 
 @Testcontainers
-class ControllersTest {
+class ControllersAndServiceTest {
     @Mock
     private HttpServletRequest request;
     @Mock
