@@ -5,10 +5,7 @@ import org.example.models.Course;
 import org.example.models.Student;
 import org.example.models.Teacher;
 import org.example.service.CreateDBAndDTO;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -56,10 +53,10 @@ public class DaoTest {
         Student student = new Student("1@mail.ru", "Виктор", 30);
         studentDao.save(student);
         Optional<Student> result = studentDao.getById(student.getId());
-        assertTrue(result.isPresent());
-        assertEquals("Виктор", student.getName());
-        assertEquals("1@mail.ru", student.getEmail());
-        assertEquals(30, student.getAge());
+        Assertions.assertTrue(result.isPresent());
+        Assertions.assertEquals("Виктор", student.getName());
+        Assertions.assertEquals("1@mail.ru", student.getEmail());
+        Assertions.assertEquals(30, student.getAge());
     }
     @Test
     public void testSaveStudent()  {
@@ -81,16 +78,16 @@ public class DaoTest {
         Optional<Student> result = studentDao.getById(student.getId());
         Optional<Student> result2 = studentDao.getById(student2.getId());
 
-        assertTrue(result.isPresent());
-        assertTrue(result2.isPresent());
-        assertEquals(student.getName(), result.get().getName());
-        assertEquals(student.getEmail(), result.get().getEmail());
-        assertEquals( student.getAge(), result.get().getAge());
-        assertEquals(student2.getName(), result2.get().getName());
-        assertEquals(student2.getEmail(), result2.get().getEmail());
-        assertEquals( student2.getAge(), result2.get().getAge());
-        assertEquals(student.getCourses().size(), result.get().getCourses().size());
-        assertEquals(0, result2.get().getCourses().size());
+        Assertions.assertTrue(result.isPresent());
+        Assertions.assertTrue(result2.isPresent());
+        Assertions.assertEquals(student.getName(), result.get().getName());
+        Assertions.assertEquals(student.getEmail(), result.get().getEmail());
+        Assertions.assertEquals(student.getAge(), result.get().getAge());
+        Assertions.assertEquals(student2.getName(), result2.get().getName());
+        Assertions.assertEquals(student2.getEmail(), result2.get().getEmail());
+        Assertions.assertEquals(student2.getAge(), result2.get().getAge());
+        Assertions.assertEquals(student.getCourses().size(), result.get().getCourses().size());
+        Assertions.assertEquals(0, result2.get().getCourses().size());
          }
 
     @Test
@@ -112,10 +109,10 @@ public class DaoTest {
         student.setCourses(courses);
         studentDao.update(student);
         Optional<Student> result = studentDao.getById(student.getId());
-        assertTrue(result.isPresent());
-        assertEquals("Василий", result.get().getName());
-        assertEquals(14, result.get().getAge());
-        assertEquals(3, result.get().getCourses().size());
+        Assertions.assertTrue(result.isPresent());
+        Assertions.assertEquals("Василий", result.get().getName());
+        Assertions.assertEquals(14, result.get().getAge());
+        Assertions.assertEquals(3, result.get().getCourses().size());
     }
 
 
@@ -126,8 +123,8 @@ public class DaoTest {
         Optional<Student> result = studentDao.getById(student.getId());
         studentDao.remove(student);
         Optional<Student> result2 = studentDao.getById(student.getId());
-        assertTrue(result.isPresent());
-        assertTrue(!result2.isPresent());
+        Assertions.assertTrue(result.isPresent());
+        Assertions.assertFalse(result2.isPresent());
 
     }
 
@@ -136,10 +133,10 @@ public class DaoTest {
         Student student = new Student("1@mail.ru", "Виктор", 30);
         studentDao.save(student);
         Optional<Student> result = studentDao.getByEmail(student.getEmail());
-        assertTrue(result.isPresent());
-        assertEquals("Виктор", student.getName());
-        assertEquals("1@mail.ru", student.getEmail());
-        assertEquals(30, student.getAge());
+        Assertions.assertTrue(result.isPresent());
+        Assertions.assertEquals("Виктор", student.getName());
+        Assertions.assertEquals("1@mail.ru", student.getEmail());
+        Assertions.assertEquals(30, student.getAge());
     }
 
 
@@ -161,7 +158,7 @@ public class DaoTest {
         Set<Student> actualStudents = studentDao.getAll();
         sortedActualStudents.addAll(actualStudents);
         sortedExpectedStudents.addAll(expectedStudents);
-        assertEquals(sortedExpectedStudents, sortedActualStudents);
+        Assertions.assertEquals(sortedExpectedStudents, sortedActualStudents);
     }
 
 
@@ -182,10 +179,10 @@ public class DaoTest {
         course.setStudents(students);
         courseDao.save(course);
         Optional<Course> result = courseDao.getById(course.getId());
-        assertTrue(result.isPresent());
-        assertEquals("java", course.getName());
-        assertEquals(teacher.getName(), result.get().getTeacher().getName());
-        assertEquals(students.size(), result.get().getStudents().size());
+        Assertions.assertTrue(result.isPresent());
+        Assertions.assertEquals("java", course.getName());
+        Assertions.assertEquals(teacher.getName(), result.get().getTeacher().getName());
+        Assertions.assertEquals(students.size(), result.get().getStudents().size());
     }
     @Test
     public void testSaveCourse()  {
@@ -213,14 +210,14 @@ public class DaoTest {
         Optional<Course> result = courseDao.getById(course.getId());
         Optional<Course> result2 = courseDao.getById(course1.getId());
         Optional<Course> result3 = courseDao.getById(course2.getId());
-        assertTrue(result.isPresent());
-        assertTrue(result2.isPresent());
-        assertTrue(result3.isPresent());
-        assertEquals("java", course.getName());
-        assertEquals(teacher.getName(), course.getTeacher().getName());
-        assertEquals(students.size(), course.getStudents().size());
-        assertEquals("python", course1.getName());
-        assertEquals("js", course2.getName());
+        Assertions.assertTrue(result.isPresent());
+        Assertions.assertTrue(result2.isPresent());
+        Assertions.assertTrue(result3.isPresent());
+        Assertions.assertEquals("java", course.getName());
+        Assertions.assertEquals(teacher.getName(), course.getTeacher().getName());
+        Assertions.assertEquals(students.size(), course.getStudents().size());
+        Assertions.assertEquals("python", course1.getName());
+        Assertions.assertEquals("js", course2.getName());
     }
 
 
@@ -248,9 +245,9 @@ public class DaoTest {
 
         Optional<Course> result2 = courseDao.getById(course.getId());
 
-        assertTrue(result.isPresent());
-        assertEquals(0, result.get().getStudents().size());
-        assertEquals(2, result2.get().getStudents().size());
+        Assertions.assertTrue(result.isPresent());
+        Assertions.assertEquals(0, result.get().getStudents().size());
+        Assertions.assertEquals(2, result2.get().getStudents().size());
     }
 
 
@@ -261,8 +258,8 @@ public class DaoTest {
         Optional<Course> result = courseDao.getById(course.getId());
         courseDao.remove(course);
         Optional<Course> result2 = courseDao.getById(course.getId());
-        assertTrue(result.isPresent());
-        assertTrue(!result2.isPresent());
+        Assertions.assertTrue(result.isPresent());
+        Assertions.assertFalse(result2.isPresent());
 
     }
 
@@ -284,7 +281,7 @@ public class DaoTest {
         Set<Course> actualCourse = courseDao.getAll();
         sortedActualCourse.addAll(actualCourse);
         sortedExpectedCourse.addAll(expectedCourse);
-        assertEquals(sortedExpectedCourse, sortedActualCourse);
+        Assertions.assertEquals(sortedExpectedCourse, sortedActualCourse);
     }
 
     ////Teacher Test
@@ -299,10 +296,10 @@ public class DaoTest {
         teacher.setCourses(courses);
         teacherDao.save(teacher);
         Optional<Teacher> result = teacherDao.getById(teacher.getId());
-        assertTrue(result.isPresent());
-        assertEquals(teacher.getName(), result.get().getName());
-        assertEquals(teacher.getEmail(), result.get().getEmail());
-        assertEquals(teacher.getCourses().size(), result.get().getCourses().size());
+        Assertions.assertTrue(result.isPresent());
+        Assertions.assertEquals(teacher.getName(), result.get().getName());
+        Assertions.assertEquals(teacher.getEmail(), result.get().getEmail());
+        Assertions.assertEquals(teacher.getCourses().size(), result.get().getCourses().size());
     }
     @Test
     public void testSaveTeacher()  {
@@ -324,13 +321,13 @@ public class DaoTest {
         Optional<Teacher> result = teacherDao.getById(teacher.getId());
         Optional<Teacher> result2 = teacherDao.getById(teacher1.getId());
         Optional<Teacher> result3 = teacherDao.getById(teacher2.getId());
-        assertTrue(result.isPresent());
-        assertTrue(result2.isPresent());
-        assertTrue(result3.isPresent());
-        assertEquals(teacher.getName(), result.get().getName());
-        assertEquals(teacher1.getName(),result2.get().getName());
-        assertEquals(teacher2.getName(),result3.get().getName());
-        assertEquals(teacher.getCourses().size(), result.get().getCourses().size());
+        Assertions.assertTrue(result.isPresent());
+        Assertions.assertTrue(result2.isPresent());
+        Assertions.assertTrue(result3.isPresent());
+        Assertions.assertEquals(teacher.getName(), result.get().getName());
+        Assertions.assertEquals(teacher1.getName(), result2.get().getName());
+        Assertions.assertEquals(teacher2.getName(), result3.get().getName());
+        Assertions.assertEquals(teacher.getCourses().size(), result.get().getCourses().size());
 
     }
 
@@ -351,9 +348,9 @@ public class DaoTest {
         teacher.setCourses(courses);
         teacherDao.update(teacher);
         Optional<Teacher> result2 = teacherDao.getById(teacher.getId());
-        assertTrue(result.isPresent());
-        assertEquals(0, result.get().getCourses().size());
-        assertEquals(2, result2.get().getCourses().size());
+        Assertions.assertTrue(result.isPresent());
+        Assertions.assertEquals(0, result.get().getCourses().size());
+        Assertions.assertEquals(2, result2.get().getCourses().size());
     }
 
 
@@ -364,8 +361,8 @@ public class DaoTest {
         Optional<Teacher> result = teacherDao.getById(teacher.getId());
         teacherDao.remove(teacher);
         Optional<Teacher> result2 = teacherDao.getById(teacher.getId());
-        assertTrue(result.isPresent());
-        assertTrue(!result2.isPresent());
+        Assertions.assertTrue(result.isPresent());
+        Assertions.assertFalse(result2.isPresent());
 
     }
 
@@ -387,6 +384,6 @@ public class DaoTest {
         Set<Teacher> actualTeacher = teacherDao.getAll();
         sortedActualTeacher.addAll(actualTeacher);
         sortedExpectedTeacher.addAll(expectedTeacher);
-        assertEquals(sortedExpectedTeacher, sortedActualTeacher);
+        Assertions.assertEquals(sortedExpectedTeacher, sortedActualTeacher);
     }
 }
