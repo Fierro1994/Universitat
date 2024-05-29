@@ -3,18 +3,22 @@ package org.example.controllers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.example.dto.CourseDto;
 import org.example.service.CourseService;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.util.Map;
 import java.util.stream.Collectors;
-import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+/**
+ * Контроллер курсов.
+ * Этот класс обрабатывает HTTP-запросы для работы с курсами.
+ * Он использует сервис CourseService для выполнения бизнес-логики.
+ */
 
 @WebServlet(name = "CourseController",
         loadOnStartup = 1,
@@ -28,11 +32,20 @@ public class CourseController extends HttpServlet {
     private Connection connection;
     private CourseService courseService;
 
+    /**
+     * Конструктор класса.
+     * @param connection подключение к базе данных
+     */
     public CourseController(Connection connection) {
         this.connection = connection;
         courseService = new CourseService(connection);
     }
-
+    /**
+     * Обработчик GET-запроса.
+     * @param request объект запроса
+     * @param response объект ответа
+     * @throws IOException исключение ввода-вывода
+     */
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
@@ -52,10 +65,14 @@ public class CourseController extends HttpServlet {
                 out.flush();
                 out.close();
         }
-
     }
 
-
+    /**
+     * Обработчик POST-запроса.
+     * @param request объект запроса
+     * @param response объект ответа
+     * @throws IOException исключение ввода-вывода
+     */
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
@@ -79,9 +96,13 @@ public class CourseController extends HttpServlet {
         out.println(courseDto.toString());
         out.flush();
         out.close();
-
     }
-
+    /**
+     * Обработчик PUT-запроса.
+     * @param request объект запроса
+     * @param response объект ответа
+     * @throws IOException исключение ввода-вывода
+     */
     public void doPut(HttpServletRequest request, HttpServletResponse response) throws IOException {
         request.setCharacterEncoding("UTF-8");
         response.setContentType("application/json; charset=UTF-8");
@@ -95,8 +116,6 @@ public class CourseController extends HttpServlet {
         CourseDto courseDto = objectMapper.readValue(json, CourseDto.class);
         response.setContentType("application/json; charset=UTF-8");
         response.setCharacterEncoding("UTF-8");
-        String jsonResponse = "";
-
         switch (pathParam) {
             case "/updateCourse":
                 Map<Integer, CourseDto> responseMap = courseService.updateCourse(courseDto);
@@ -106,9 +125,13 @@ public class CourseController extends HttpServlet {
         out.println(courseDto);
         out.flush();
         out.close();
-
     }
-
+    /**
+     * Обработчик DELETE-запроса.
+     * @param request объект запроса
+     * @param response объект ответа
+     * @throws IOException исключение ввода-вывода
+     */
     public void doDelete(HttpServletRequest request, HttpServletResponse response) throws IOException {
         request.setCharacterEncoding("UTF-8");
         response.setContentType("application/json; charset=UTF-8");
@@ -124,10 +147,7 @@ public class CourseController extends HttpServlet {
         out.print(jsonResponse);
         out.flush();
         out.close();
-
     }
-
-
 }
 
 

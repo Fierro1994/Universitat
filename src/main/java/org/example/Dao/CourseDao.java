@@ -9,7 +9,9 @@ import java.sql.*;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
-
+/**
+ * Класс для работы с курсами в базе данных.
+ */
 public class CourseDao implements CrudDao<Course> {
 
     private final String DB_NAME = "dbmelody";
@@ -19,7 +21,9 @@ public class CourseDao implements CrudDao<Course> {
         this.connection = connection;
         init();
     }
-
+    /**
+     * Инициализирует подключение к базе данных.
+     */
     private void init() {
         try {
             String initSQL = "USE " + DB_NAME + ";";
@@ -29,7 +33,11 @@ public class CourseDao implements CrudDao<Course> {
             e.printStackTrace();
         }
     }
-
+    /**
+     * Получение курса по имени.
+     * @param name - имя курса
+     * @return Optional<Course> - курс, если он существует, Optional.empty() - если нет
+     */
     public Optional<Course> getByName(String name) {
         try {
             String query = "SELECT * FROM courses WHERE name_course = ?";
@@ -54,7 +62,11 @@ public class CourseDao implements CrudDao<Course> {
         return Optional.empty();
     }
 
-
+    /**
+     * Получение курса по идентификатору.
+     * @param id - идентификатор курса
+     * @return Optional<Course> - курс, если он существует, Optional.empty() - если нет
+     */
     @Override
     public Optional<Course> getById(Long id) {
         try {
@@ -78,7 +90,10 @@ public class CourseDao implements CrudDao<Course> {
         }
         return Optional.empty();
     }
-
+    /**
+     * Получение всех курсов.
+     * @return Set<Course> - набор всех курсов
+     */
     @Override
     public Set<Course> getAll() {
         Set<Course> courses = new HashSet<>();
@@ -101,7 +116,10 @@ public class CourseDao implements CrudDao<Course> {
         }
         return courses;
     }
-
+    /**
+     * Сохранение курса.
+     * @param course - курс для сохранения
+     */
     @Override
     public void save(Course course) {
         Optional<Course> existsCourseByName = getByName(course.getName());
@@ -142,7 +160,10 @@ public class CourseDao implements CrudDao<Course> {
 
         }
     }
-
+    /**
+     * Обновление курса.
+     * @param course - курс для обновления
+     */
     @Override
     public void update(Course course) {
         Optional<Course> existingCourse = getByName(course.getName());
@@ -180,7 +201,10 @@ public class CourseDao implements CrudDao<Course> {
             course = getByName(course.getName()).get();
         }
     }
-
+    /**
+     * Удаление курса.
+     * @param course - курс для удаления
+     */
     @Override
     public void remove(Course course) {
         Optional<Course> existingCourse = getByName(course.getName());
@@ -198,6 +222,13 @@ public class CourseDao implements CrudDao<Course> {
         }
     }
 
+    /**
+     * Получает студента по электронной почте.
+     *
+     * @param email электронная почта студента
+     * @return студент, если найден, или пустой объект, если студент не найден
+     * @throws SQLException если возникает ошибка при выполнении запроса к базе данных
+     */
     private Optional<Student> getStudentByEmail(String email) {
         try {
             String query = "SELECT * FROM students WHERE email = ?";
@@ -220,7 +251,13 @@ public class CourseDao implements CrudDao<Course> {
         return Optional.empty();
     }
 
-
+    /**
+     * Проверяет и обновляет связь между студентом и курсом.
+     *
+     * @param student студент, связь которого нужно проверить и обновить
+     * @param course курс, связь которого нужно проверить и обновить
+     * @throws SQLException если возникает ошибка при выполнении запроса к базе данных
+     */
     private void checkAndUpdateStudentCourse(Student student, Course course) {
         try {
             String query = "SELECT COUNT(*) FROM students_and_courses WHERE student_id = ? and course_id = ?";
@@ -235,7 +272,13 @@ public class CourseDao implements CrudDao<Course> {
             e.printStackTrace();
         }
     }
-
+    /**
+     * Обновляет связь между студентом и курсом в таблице students_and_courses.
+     *
+     * @param student студент, связь которого нужно обновить
+     * @param course курс, связь которого нужно обновить
+     * @throws SQLException если возникает ошибка при выполнении запроса к базе данных
+     */
     private void updateStudentCourse(Student student, Course course) {
         try {
             String query = "UPDATE students_and_courses SET student_id = ?, course_id = ? WHERE student_id = ? AND course_id = ?";
@@ -249,7 +292,13 @@ public class CourseDao implements CrudDao<Course> {
             e.printStackTrace();
         }
     }
-
+    /**
+     * Добавляет связь между студентом и курсом в таблицу students_and_courses.
+     *
+     * @param student студент, связь которого нужно добавить
+     * @param course курс, связь которого нужно добавить
+     * @throws SQLException если возникает ошибка при выполнении запроса к базе данных
+     */
     private void addStudentCourse(Student student, Course course) {
         try {
             String query = "INSERT INTO students_and_courses (student_id, course_id) VALUES (?, ?)";
@@ -261,7 +310,13 @@ public class CourseDao implements CrudDao<Course> {
             e.printStackTrace();
         }
     }
-
+    /**
+     * Получает Set студентов, связанных с указанным курсом.
+     *
+     * @param courseId идентификатор курса
+     * @return Set студентов, связанных с курсом
+     * @throws SQLException если возникает ошибка при выполнении запроса к базе данных
+     */
     private Set<Student> getStudentsForCourse(long courseId) throws SQLException {
         Set<Student> students = new HashSet<>();
         String query = "SELECT * FROM students_and_courses WHERE course_id = ?";
@@ -277,7 +332,13 @@ public class CourseDao implements CrudDao<Course> {
         }
         return students;
     }
-
+/**
+ * Получает учителя по электронной почте.
+ *
+ * @param email электронная почта учителя
+ * @return учитель с указанной электронной почтой, если он существует, иначе пустой Optional
+ * @throws SQLException если возникает ошибка при выполнении запроса
+ */
     private Optional<Teacher> getTeacherByEmail(String email) {
         try {
             String query = "SELECT * FROM teachers WHERE email = ?";
@@ -299,7 +360,13 @@ public class CourseDao implements CrudDao<Course> {
         return Optional.empty();
     }
 
-
+    /**
+     * Обновляет учителя для указанного курса.
+     *
+     * @param teacher учитель, который будет связан с курсом
+     * @param course курс, который будет обновлен с новым учителем
+     * @throws SQLException если возникает ошибка при выполнении запроса к базе данных
+     */
     private void updateTeacherCourse(Teacher teacher, Course course) {
         try {
             String query = "UPDATE courses SET teacher_id = ? WHERE id = ?";
@@ -312,7 +379,13 @@ public class CourseDao implements CrudDao<Course> {
         }
     }
 
-
+    /**
+     * Получает учителя, связанного с указанным курсом.
+     *
+     * @param courseId идентификатор курса
+     * @return учитель, связанный с курсом, или null, если учитель не найден
+     * @throws SQLException если возникает ошибка при выполнении SQL-запроса
+     */
     private Teacher getTeacherForCourse(long courseId) throws SQLException {
         String query = "SELECT * FROM courses WHERE id = ?";
         PreparedStatement statement = connection.prepareStatement(query);
@@ -327,7 +400,13 @@ public class CourseDao implements CrudDao<Course> {
         }
         return null;
     }
-
+    /**
+     * Получает студента по его идентификатору.
+     *
+     * @param id идентификатор студента
+     * @return студент с указанным идентификатором, если он существует, иначе пустой Optional
+     * @throws SQLException если возникает ошибка при выполнении запроса к базе данных
+     */
     private Optional<Student> getStudentById(Long id) {
         try {
             String query = "SELECT * FROM students WHERE id = ?";
@@ -349,7 +428,13 @@ public class CourseDao implements CrudDao<Course> {
 
         return Optional.empty();
     }
-
+    /**
+     * Получает учителя из базы данных по указанному идентификатору.
+     *
+     * @param id идентификатор учителя
+     * @return учитель с указанным идентификатором, если он найден, или пустой объект, если учитель не найден
+     * @throws SQLException если возникает ошибка при выполнении SQL-запроса
+     */
     private Optional<Teacher> getTeacherById(Long id) {
         try {
             String query = "SELECT * FROM teachers WHERE id = ?";

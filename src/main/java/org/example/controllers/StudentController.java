@@ -14,6 +14,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+
+/**
+ * Контроллер студентов.
+ * Этот класс обрабатывает HTTP-запросы для работы с студентами.
+ * Он использует сервис StudentsService для выполнения бизнес-логики.
+ */
 @WebServlet(name = "StudentsController",
         loadOnStartup = 1,
         urlPatterns = {
@@ -31,7 +37,12 @@ public class StudentController extends HttpServlet {
         this.connection = connection;
         studentsService = new StudentsService(connection);
     }
-
+    /**
+     * Обработка запроса GET.
+     * @param request запрос
+     * @param response ответ
+     * @throws IOException исключение
+     */
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
@@ -53,7 +64,12 @@ public class StudentController extends HttpServlet {
         out.close();
     }
 
-
+    /**
+     * Обработка запроса POST.
+     * @param request запрос
+     * @param response ответ
+     * @throws IOException исключение
+     */
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
@@ -78,7 +94,12 @@ public class StudentController extends HttpServlet {
         out.close();
 
     }
-
+    /**
+     * Обработка запроса PUT.
+     * @param request запрос
+     * @param response ответ
+     * @throws IOException исключение
+     */
     public void doPut(HttpServletRequest request, HttpServletResponse response) throws IOException {
         request.setCharacterEncoding("UTF-8");
         response.setContentType("application/json; charset=UTF-8");
@@ -100,7 +121,12 @@ public class StudentController extends HttpServlet {
         out.close();
 
     }
-
+    /**
+     * Обработчик DELETE-запроса.
+     * @param request объект запроса
+     * @param response объект ответа
+     * @throws IOException исключение ввода-вывода
+     */
     public void doDelete(HttpServletRequest request, HttpServletResponse response) throws IOException {
         request.setCharacterEncoding("UTF-8");
         response.setContentType("application/json; charset=UTF-8");

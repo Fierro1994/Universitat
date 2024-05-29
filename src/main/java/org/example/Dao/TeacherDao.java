@@ -6,7 +6,9 @@ import org.example.models.Teacher;
 
 import java.sql.*;
 import java.util.*;
-
+/**
+ * Класс для работы с преподавателями в базе данных.
+ */
 public class TeacherDao implements CrudDao<Teacher> {
     private final String DB_NAME = "dbmelody";
     private Connection connection;
@@ -15,7 +17,9 @@ public class TeacherDao implements CrudDao<Teacher> {
         this.connection = connection;
         init();
     }
-
+    /**
+     * Инициализирует подключение к базе данных.
+     */
     private void init() {
         try {
             String initSQL = "USE " + DB_NAME + ";";
@@ -25,7 +29,12 @@ public class TeacherDao implements CrudDao<Teacher> {
             e.printStackTrace();
         }
     }
-
+    /**
+     * Получает преподавателя по его идентификатору.
+     *
+     * @param id идентификатор преподавателя
+     * @return преподаватель, если найден, иначе пустой Optional
+     */
     @Override
     public Optional<Teacher> getById(Long id) {
         try {
@@ -49,7 +58,11 @@ public class TeacherDao implements CrudDao<Teacher> {
         }
         return Optional.empty();
     }
-
+    /**
+     * Получает всех преподавателей.
+     *
+     * @return set преподавателей
+     */
     @Override
     public Set<Teacher> getAll() {
         Set<Teacher> teachers = new HashSet<>();
@@ -70,7 +83,11 @@ public class TeacherDao implements CrudDao<Teacher> {
         }
         return teachers;
     }
-
+    /**
+     * Сохраняет преподавателя в базе данных.
+     *
+     * @param teacher преподаватель для сохранения
+     */
     @Override
     public void save(Teacher teacher) {
         Optional<Teacher> existingTeacher = getByEmail(teacher.getEmail());
@@ -103,7 +120,11 @@ public class TeacherDao implements CrudDao<Teacher> {
             }
         }
     }
-
+    /**
+     * Обновляет данные преподателя в базе данных.
+     *
+     * @param teacher преподатель для обновления
+     */
     @Override
     public void update(Teacher teacher) {
         CourseDao courseDao = new CourseDao(connection);
@@ -134,7 +155,11 @@ public class TeacherDao implements CrudDao<Teacher> {
         }
         teacher = getByEmail(teacher.getEmail()).get();
     }
-
+    /**
+     * Удаляет преподавателя из базы данных.
+     *
+     * @param teacher преподаватель для удаления
+     */
     @Override
     public void remove(Teacher teacher) {
         Optional<Teacher> existingTeacher = getByEmail(teacher.getEmail());
@@ -151,7 +176,12 @@ public class TeacherDao implements CrudDao<Teacher> {
             }
         }
     }
-
+    /**
+     * Получает преподавателя по его email.
+     *
+     * @param email email преподавателя
+     * @return преподаватель, если найден, иначе пустой Optional
+     */
     private Optional<Teacher> getByEmail(String email) {
         try {
             String query = "SELECT * FROM teachers WHERE email = ?";
@@ -172,7 +202,13 @@ public class TeacherDao implements CrudDao<Teacher> {
 
         return Optional.empty();
     }
-
+    /**
+     * Получает курсы преподавателя.
+     *
+     * @param teacherId идентификатор преподавателя
+     * @return набор курсов преподавателя
+     * @throws SQLException если возникла ошибка при выполнении запроса к базе данных
+     */
     private Set<Course> getCoursesForTeacher(Long teacherId) throws SQLException {
         Set<Course> courses = new HashSet<>();
         String query = "SELECT * FROM courses WHERE teacher_id = ?";
@@ -190,7 +226,13 @@ public class TeacherDao implements CrudDao<Teacher> {
         return courses;
     }
 
-
+    /**
+     * Получает курс по его имени.
+     *
+     * @param name имя курса
+     * @return курс, если найден, иначе пустой Optional
+     * @throws SQLException если возникла ошибка при выполнении запроса к базе данных
+     */
     private Optional<Course> getCourseByName(String name) throws SQLException {
         Course course = new Course();
         String query = "SELECT * FROM courses WHERE name_course = ?";
@@ -204,7 +246,12 @@ public class TeacherDao implements CrudDao<Teacher> {
         }
         return Optional.empty();
     }
-
+    /**
+     * Обновляет преподавателя в курсе.
+     *
+     * @param teacher преподаватель
+     * @param course курс
+     */
     private void updateTeacherCourse(Teacher teacher, Course course) {
         try {
             String query = "UPDATE courses SET teacher_id = ? WHERE id = ?";

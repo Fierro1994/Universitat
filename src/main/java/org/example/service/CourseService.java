@@ -12,17 +12,29 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-
+/**
+ * Класс для реализации бизнесс логики курсов.
+ */
 public class CourseService {
 
     private Connection connection;
     private CourseDao courseDao;
 
+    /**
+     * Создает новый экземпляр CourseService.
+     *
+     * @param connection подключение к базе данных
+     */
     public CourseService(Connection connection) {
         this.connection = connection;
         courseDao = new CourseDao(connection);
     }
-
+    /**
+     * Получает курс по его идентификатору.
+     *
+     * @param id идентификатор курса
+     * @return набор с информацией о курсе и его статусом (SC_FOUND или SC_NOT_FOUND)
+     */
     public Map<Integer, CourseDto> getCourse(Long id) {
         Map<Integer, CourseDto> jsonResponse = new HashMap<>();
         CourseDto courseDto = new CourseDto();
@@ -36,10 +48,22 @@ public class CourseService {
         return jsonResponse;
     }
 
+    /**
+     * Получает все курсы.
+     *
+     * @return набор курсов
+     */
     public Set<Course> getAll() {
         return courseDao.getAll();
     }
 
+    /**
+     * Добавляет новый курс.
+     *
+     * @param courseDto объект CourseDto с информацией о курсе
+     * @return Map с информацией о добавленном курсе и его статусом (SC_CREATED или SC_CONFLICT)
+     * @throws IOException если возникла ошибка при работе с базой данных
+     */
     public Map<Integer, CourseDto> addCourse(CourseDto courseDto) throws IOException {
         Map<Integer, CourseDto> jsonResponse = new HashMap<>();
         Course course = CourseMapper.mapCourse.fromDto(courseDto);
@@ -53,7 +77,12 @@ public class CourseService {
             return jsonResponse;
         }
     }
-
+    /**
+     * Обновляет информацию о курсе.
+     *
+     * @param courseDto объект CourseDto с информацией о курсе
+     * @return Map с информацией об обновленном курсе и его статусом (SC_OK)
+     */
     public Map<Integer, CourseDto> updateCourse(CourseDto courseDto) {
         Map<Integer, CourseDto> jsonResponse = new HashMap<>();
         Course course = CourseMapper.mapCourse.fromDto(courseDto);
@@ -62,7 +91,12 @@ public class CourseService {
         jsonResponse.put(HttpServletResponse.SC_OK, courseDto);
         return jsonResponse;
     }
-
+    /**
+     * Удаляет курс по его идентификатору.
+     *
+     * @param id идентификатор курса
+     * @return JSON-ответ с информацией о результате удаления курса (успешное удаление или сообщение о том, что курс не найден)
+     */
     public String removeCourse(Long id) {
         String jsonResponse = "";
         Optional<Course> course = courseDao.getById(id);

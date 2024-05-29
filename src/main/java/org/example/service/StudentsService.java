@@ -4,23 +4,33 @@ import org.example.Dao.StudentDao;
 import org.example.dto.StudentDto;
 import org.example.mappers.StudentMapper;
 import org.example.models.Student;
-
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.*;
-
+/**
+ * Класс для реализации бизнесс логики студентов.
+ */
 public class StudentsService {
     private Connection connection;
 
     private final StudentDao studentDao;
 
+    /**
+     * Создает новый экземпляр класса StudentsService.
+     *
+     * @param connection подключение к базе данных
+     */
     public StudentsService(Connection connection) {
         this.connection = connection;
         studentDao = new StudentDao(connection);
     }
-
+    /**
+     * Получает студента по его идентификатору.
+     *
+     * @param id идентификатор студента
+     * @return Map JSON-ответа с данными студента
+     */
     public Map<Integer, StudentDto> getStudent(Long id) {
         Map<Integer, StudentDto> jsonResponse = new HashMap<>();
         StudentDto studentDto = new StudentDto();
@@ -34,10 +44,22 @@ public class StudentsService {
         return jsonResponse;
     }
 
+    /**
+     * Получает всех студентов.
+     *
+     * @return множество объектов студентов
+     */
     public Set<Student> getAll() {
         return studentDao.getAll();
     }
 
+    /**
+     * Добавляет нового студента.
+     *
+     * @param studentDto объект DTO студента
+     * @return Map JSON-ответа с данными добавленного студента
+     * @throws IOException если возникла ошибка при сохранении студента
+     */
     public Map<Integer, StudentDto> addStudent(StudentDto studentDto) throws IOException {
         Map<Integer, StudentDto> jsonResponse = new HashMap<>();
         Student student = StudentMapper.mapStudent.fromDto(studentDto);
@@ -46,7 +68,12 @@ public class StudentsService {
         jsonResponse.put(HttpServletResponse.SC_CREATED, studentDto);
         return jsonResponse;
     }
-
+    /**
+     * Обновляет данные студента.
+     *
+     * @param studentDto объект DTO студента
+     * @return Map JSON-ответа с данными обновленного студента
+     */
     public Map<Integer, StudentDto> updateStudent(StudentDto studentDto) {
         Map<Integer, StudentDto> jsonResponse = new HashMap<>();
         Student student = StudentMapper.mapStudent.fromDto(studentDto);
@@ -55,7 +82,12 @@ public class StudentsService {
         jsonResponse.put(HttpServletResponse.SC_OK, studentDto);
         return jsonResponse;
     }
-
+    /**
+     * Удаляет студента по его идентификатору.
+     *
+     * @param id идентификатор студента
+     * @return строка JSON-ответа с сообщением о результате операции
+     */
     public String removeStudent(Long id) {
         String jsonResponse = "";
         Optional<Student> student = studentDao.getById(id);

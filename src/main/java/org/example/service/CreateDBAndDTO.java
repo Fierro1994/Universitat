@@ -4,17 +4,29 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-
+/**
+ * Класс для создания и удаления базы данных.
+ */
 public class CreateDBAndDTO {
+
     private static final String SQL_CREATE_DB = "CREATE DATABASE dbmelody CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;;";
     private static final String SQL_DROP_DB = "DROP DATABASE dbmelody;";
     private Connection connection;
 
+    /**
+     * Конструктор класса CreateDBAndDTO.
+     *
+     * @param connection подключение к базе данных
+     */
     public CreateDBAndDTO(Connection connection) {
         this.connection = connection;
     }
 
-
+    /**
+     * Создает базу данных.
+     *
+     * Если база данных уже существует, она удаляется перед созданием.
+     */
     public void createDataBase() {
         Statement statement;
         try {

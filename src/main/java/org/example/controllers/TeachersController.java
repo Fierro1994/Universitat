@@ -3,19 +3,23 @@ package org.example.controllers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.example.dto.TeacherDto;
 import org.example.service.TeacherService;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.util.Map;
 import java.util.stream.Collectors;
-import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+
+/**
+ * Контроллер Учителей.
+ * Этот класс обрабатывает HTTP-запросы для работы с учителями.
+ * Он использует сервис TeacherService для выполнения бизнес-логики.
+ */
 @WebServlet(name = "TeachersController",
         loadOnStartup = 1,
         urlPatterns = {
@@ -33,7 +37,12 @@ public class TeachersController extends HttpServlet {
         this.connection = connection;
         teacherService = new TeacherService(connection);
     }
-
+    /**
+     * Обработка запроса GET.
+     * @param request запрос
+     * @param response ответ
+     * @throws IOException исключение
+     */
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
@@ -55,7 +64,12 @@ public class TeachersController extends HttpServlet {
         out.close();
     }
 
-
+    /**
+     * Обработка запроса POST.
+     * @param request запрос
+     * @param response ответ
+     * @throws IOException исключение
+     */
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
@@ -80,7 +94,12 @@ public class TeachersController extends HttpServlet {
         out.close();
 
     }
-
+    /**
+     * Обработка запроса PUT.
+     * @param request запрос
+     * @param response ответ
+     * @throws IOException исключение
+     */
     public void doPut(HttpServletRequest request, HttpServletResponse response) throws IOException {
         request.setCharacterEncoding("UTF-8");
         response.setContentType("application/json; charset=UTF-8");
@@ -105,7 +124,12 @@ public class TeachersController extends HttpServlet {
         out.close();
 
     }
-
+    /**
+     * Обработчик DELETE-запроса.
+     * @param request объект запроса
+     * @param response объект ответа
+     * @throws IOException исключение ввода-вывода
+     */
     public void doDelete(HttpServletRequest request, HttpServletResponse response) throws IOException {
         request.setCharacterEncoding("UTF-8");
         response.setContentType("application/json; charset=UTF-8");
