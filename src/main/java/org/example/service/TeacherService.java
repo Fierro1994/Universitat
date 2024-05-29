@@ -4,6 +4,7 @@ import org.example.Dao.TeacherDao;
 import org.example.dto.TeacherDto;
 import org.example.mappers.TeacherMapper;
 import org.example.models.Teacher;
+
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.Connection;
@@ -15,6 +16,7 @@ import java.util.Set;
 public class TeacherService {
     private final TeacherDao teacherDao;
     private Connection connection;
+
     public TeacherService(Connection connection) {
         this.connection = connection;
         teacherDao = new TeacherDao(connection);
@@ -23,11 +25,11 @@ public class TeacherService {
     public Map<Integer, TeacherDto> getTeacher(Long id) {
         Map<Integer, TeacherDto> jsonResponse = new HashMap<>();
         TeacherDto teacherDto = new TeacherDto();
-        Optional<Teacher>  teacher = teacherDao.getById(id);
-        if (teacher.isPresent()){
+        Optional<Teacher> teacher = teacherDao.getById(id);
+        if (teacher.isPresent()) {
             teacherDto = TeacherMapper.mapTeacher.toDto(teacher.get());
             jsonResponse.put(HttpServletResponse.SC_FOUND, teacherDto);
-        }else {
+        } else {
             jsonResponse.put(HttpServletResponse.SC_NOT_FOUND, null);
         }
         return jsonResponse;
@@ -62,7 +64,7 @@ public class TeacherService {
     }
 
     public String removeTeacher(Long id) {
-        String jsonResponse ="";
+        String jsonResponse = "";
         Optional<Teacher> teacher = teacherDao.getById(id);
         if (teacher.get().getId() != null) {
             teacherDao.remove(teacher.get());

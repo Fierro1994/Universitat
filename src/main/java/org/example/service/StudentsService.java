@@ -20,14 +20,15 @@ public class StudentsService {
         this.connection = connection;
         studentDao = new StudentDao(connection);
     }
+
     public Map<Integer, StudentDto> getStudent(Long id) {
         Map<Integer, StudentDto> jsonResponse = new HashMap<>();
         StudentDto studentDto = new StudentDto();
         Optional<Student> student = studentDao.getById(id);
-        if (student.isPresent()){
+        if (student.isPresent()) {
             studentDto = StudentMapper.mapStudent.toDto(student.get());
             jsonResponse.put(HttpServletResponse.SC_FOUND, studentDto);
-        }else {
+        } else {
             jsonResponse.put(HttpServletResponse.SC_NOT_FOUND, null);
         }
         return jsonResponse;
@@ -56,14 +57,14 @@ public class StudentsService {
     }
 
     public String removeStudent(Long id) {
-        String jsonResponse ="";
-        Optional<Student>  student = studentDao.getById(id);
+        String jsonResponse = "";
+        Optional<Student> student = studentDao.getById(id);
         if (student.get().getId() != null) {
             studentDao.remove(student.get());
             jsonResponse = "Student " + id + " removed";
         } else {
             jsonResponse = "Student " + id + " not found";
-                  }
+        }
         return jsonResponse;
     }
 }

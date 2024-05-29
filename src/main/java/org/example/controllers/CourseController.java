@@ -3,6 +3,7 @@ package org.example.controllers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.example.dto.CourseDto;
 import org.example.service.CourseService;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -34,16 +35,16 @@ public class CourseController extends HttpServlet {
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws  IOException {
+            throws IOException {
         request.setCharacterEncoding("UTF-8");
         response.setContentType("application/json; charset=UTF-8");
         response.setCharacterEncoding("UTF-8");
         PrintWriter out = response.getWriter();
         String pathParam = request.getServletPath();
-        Long id =Long.parseLong(request.getParameter("id"));
+        Long id = Long.parseLong(request.getParameter("id"));
         CourseDto courseDto;
         switch (pathParam) {
-            case  "/getCourse":
+            case "/getCourse":
                 Map<Integer, CourseDto> responseMap = courseService.getCourse(id);
                 response.setStatus(responseMap.entrySet().stream().findFirst().get().getKey());
                 courseDto = responseMap.entrySet().stream().findFirst().get().getValue();
@@ -57,7 +58,7 @@ public class CourseController extends HttpServlet {
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws  IOException {
+            throws IOException {
         request.setCharacterEncoding("UTF-8");
         response.setContentType("application/json; charset=UTF-8");
         response.setCharacterEncoding("UTF-8");
@@ -70,7 +71,7 @@ public class CourseController extends HttpServlet {
         CourseDto courseDto = objectMapper.readValue(json, CourseDto.class);
 
         switch (pathParam) {
-            case  "/addCourse":
+            case "/addCourse":
                 Map<Integer, CourseDto> responseMap = courseService.addCourse(courseDto);
                 response.setStatus(responseMap.entrySet().stream().findFirst().get().getKey());
                 courseDto = responseMap.entrySet().stream().findFirst().get().getValue();
@@ -80,6 +81,7 @@ public class CourseController extends HttpServlet {
         out.close();
 
     }
+
     public void doPut(HttpServletRequest request, HttpServletResponse response) throws IOException {
         request.setCharacterEncoding("UTF-8");
         response.setContentType("application/json; charset=UTF-8");
@@ -96,7 +98,7 @@ public class CourseController extends HttpServlet {
         String jsonResponse = "";
 
         switch (pathParam) {
-            case  "/updateCourse":
+            case "/updateCourse":
                 Map<Integer, CourseDto> responseMap = courseService.updateCourse(courseDto);
                 response.setStatus(responseMap.entrySet().stream().findFirst().get().getKey());
                 courseDto = responseMap.entrySet().stream().findFirst().get().getValue();
@@ -114,9 +116,9 @@ public class CourseController extends HttpServlet {
         PrintWriter out = response.getWriter();
         String pathParam = request.getServletPath();
         String jsonResponse = "";
-        Long id =Long.parseLong(request.getParameter("id"));
+        Long id = Long.parseLong(request.getParameter("id"));
         switch (pathParam) {
-            case  "/removeCourse":
+            case "/removeCourse":
                 jsonResponse = courseService.removeCourse(id);
         }
         out.print(jsonResponse);

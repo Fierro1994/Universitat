@@ -4,6 +4,7 @@ import org.example.Dao.interfaceDao.CrudDao;
 import org.example.models.Course;
 import org.example.models.Student;
 import org.example.models.Teacher;
+
 import java.sql.*;
 import java.util.HashSet;
 import java.util.Optional;
@@ -19,7 +20,7 @@ public class CourseDao implements CrudDao<Course> {
         init();
     }
 
-    private void init(){
+    private void init() {
         try {
             String initSQL = "USE " + DB_NAME + ";";
             PreparedStatement statement = connection.prepareStatement(initSQL);
@@ -89,7 +90,7 @@ public class CourseDao implements CrudDao<Course> {
                 Course course = new Course();
                 course.setId(resultSet.getLong("id"));
                 course.setName(resultSet.getString("name_course"));
-                if (resultSet.getLong("teacher_id") != 0){
+                if (resultSet.getLong("teacher_id") != 0) {
                     course.setTeacher(getTeacherById(resultSet.getLong("teacher_id")).get());
                 }
                 course.setStudents(getStudentsForCourse(course.getId()));
@@ -116,13 +117,12 @@ public class CourseDao implements CrudDao<Course> {
                 if (resultSet.next()) {
                     long courseId = resultSet.getLong(1);
                     course.setId(courseId);
-                    if (course.getStudents() != null){
+                    if (course.getStudents() != null) {
                         for (Student student : course.getStudents()) {
                             Optional<Student> existingStudent = getStudentByEmail(student.getEmail());
                             if (existingStudent.isPresent()) {
                                 checkAndUpdateStudentCourse(existingStudent.get(), course);
-                            }
-                            else {
+                            } else {
                                 throw new RuntimeException("Student with email " + student.getEmail() + " not found");
                             }
                         }
@@ -134,7 +134,7 @@ public class CourseDao implements CrudDao<Course> {
             if (course.getTeacher() != null) {
                 Optional<Teacher> existingTeacher = getTeacherByEmail(course.getTeacher().getEmail());
                 if (existingTeacher.isPresent()) {
-                  updateTeacherCourse(existingTeacher.get(), course);
+                    updateTeacherCourse(existingTeacher.get(), course);
                 } else {
                     throw new RuntimeException("Teacher with name " + course.getTeacher().getName() + " not found");
                 }
@@ -166,13 +166,12 @@ public class CourseDao implements CrudDao<Course> {
                     throw new RuntimeException("Teacher with name " + course.getTeacher().getName() + " not found");
                 }
             }
-            if (course.getStudents() != null){
+            if (course.getStudents() != null) {
                 for (Student student : course.getStudents()) {
                     Optional<Student> existingStudent = getStudentByEmail(student.getEmail());
                     if (existingStudent.isPresent()) {
                         checkAndUpdateStudentCourse(existingStudent.get(), course);
-                    }
-                    else {
+                    } else {
                         throw new RuntimeException("Student with email " + student.getEmail() + " not found");
                     }
                 }
@@ -187,7 +186,7 @@ public class CourseDao implements CrudDao<Course> {
         Optional<Course> existingCourse = getByName(course.getName());
         if (!existingCourse.isPresent()) {
             throw new RuntimeException("Course not found");
-        }else {
+        } else {
             try {
                 String query = "DELETE FROM courses WHERE id = ?";
                 PreparedStatement statement = connection.prepareStatement(query);
@@ -198,6 +197,7 @@ public class CourseDao implements CrudDao<Course> {
             }
         }
     }
+
     private Optional<Student> getStudentByEmail(String email) {
         try {
             String query = "SELECT * FROM students WHERE email = ?";
@@ -219,7 +219,6 @@ public class CourseDao implements CrudDao<Course> {
 
         return Optional.empty();
     }
-
 
 
     private void checkAndUpdateStudentCourse(Student student, Course course) {
@@ -312,7 +311,6 @@ public class CourseDao implements CrudDao<Course> {
             e.printStackTrace();
         }
     }
-
 
 
     private Teacher getTeacherForCourse(long courseId) throws SQLException {

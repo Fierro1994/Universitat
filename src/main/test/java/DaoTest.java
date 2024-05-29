@@ -30,7 +30,7 @@ public class DaoTest {
     private static CreateDBAndDTO createDBAndDTO;
 
     @BeforeAll
-    public static void setUp() throws SQLException, ClassNotFoundException {
+    public static void setUp() throws SQLException {
         MY_SQL_CONTAINER.start();
         connection = DriverManager.getConnection(MY_SQL_CONTAINER.getJdbcUrl(), MY_SQL_CONTAINER.getUsername(), MY_SQL_CONTAINER.getPassword());
         studentDao = new StudentDao(connection);
@@ -46,13 +46,13 @@ public class DaoTest {
     }
 
     @BeforeEach
-    public void setupBeforeEach() throws SQLException, ClassNotFoundException {
+    public void setupBeforeEach() {
         createDBAndDTO = new CreateDBAndDTO(connection);
         createDBAndDTO.createDataBase();
     }
 
     @Test
-    public void testGetByIdStudent() throws SQLException {
+    public void testGetByIdStudent()  {
         Student student = new Student("1@mail.ru", "Виктор", 30);
         studentDao.save(student);
         Optional<Student> result = studentDao.getById(student.getId());
@@ -62,7 +62,7 @@ public class DaoTest {
         assertEquals(30, student.getAge());
     }
     @Test
-    public void testSaveStudent() throws SQLException {
+    public void testSaveStudent()  {
         Student student = new Student("1@mail.ru", "1");
         Student student2 = new Student("2@mail.ru", "2", 1);
         Course course = new Course("java");
@@ -94,7 +94,7 @@ public class DaoTest {
          }
 
     @Test
-    public void testUpdateStudent() throws SQLException {
+    public void testUpdateStudent() {
         Student student = new Student("1@mail.ru", "Виктор", 30);
         studentDao.save(student);
         student.setAge(14);
@@ -120,7 +120,7 @@ public class DaoTest {
 
 
     @Test
-    public void testRemoveStudent() throws SQLException {
+    public void testRemoveStudent(){
         Student student = new Student("1@mail.ru", "Виктор", 30);
         studentDao.save(student);
         Optional<Student> result = studentDao.getById(student.getId());
@@ -132,7 +132,7 @@ public class DaoTest {
     }
 
     @Test
-    public void testGetByEmailStudents() throws SQLException {
+    public void testGetByEmailStudents() {
         Student student = new Student("1@mail.ru", "Виктор", 30);
         studentDao.save(student);
         Optional<Student> result = studentDao.getByEmail(student.getEmail());
@@ -144,7 +144,7 @@ public class DaoTest {
 
 
     @Test
-    void testGetAllStudents() throws SQLException {
+    void testGetAllStudents(){
         Set<Student> expectedStudents = new HashSet<>();
         Student student = new Student("1@mail.ru", "1");
         Student student2 = new Student("2@mail.ru", "2", 1);
@@ -167,7 +167,7 @@ public class DaoTest {
 
     ////Courses Test
     @Test
-    public void testGetByIdCourse() throws SQLException {
+    public void testGetByIdCourse() {
         Course course = new Course("java");
         Student student = new Student("1@mail.ru", "Виктор", 30);
         Student student2 = new Student("2@mail.ru", "Петр", 28);
@@ -188,7 +188,7 @@ public class DaoTest {
         assertEquals(students.size(), result.get().getStudents().size());
     }
     @Test
-    public void testSaveCourse() throws SQLException {
+    public void testSaveCourse()  {
         Course course = new Course("java");
         Course course1 = new Course("python");
         Course course2 = new Course("js");
@@ -226,7 +226,7 @@ public class DaoTest {
 
 
     @Test
-    public void testUpdateCourse() throws SQLException {
+    public void testUpdateCourse() {
         Course course = new Course("java");
         courseDao.save(course);
         Optional<Course> result = courseDao.getById(course.getId());
@@ -255,7 +255,7 @@ public class DaoTest {
 
 
     @Test
-    public void testRemoveCourse() throws SQLException {
+    public void testRemoveCourse()  {
         Course course = new Course("java");
         courseDao.save(course);
         Optional<Course> result = courseDao.getById(course.getId());
@@ -267,7 +267,7 @@ public class DaoTest {
     }
 
     @Test
-    void testGetAllCourses() throws SQLException {
+    void testGetAllCourses() {
         Set<Course> expectedCourse = new HashSet<>();
         Course course = new Course("java");
         Course course1 = new Course("python");
@@ -289,7 +289,7 @@ public class DaoTest {
 
     ////Teacher Test
     @Test
-    public void testGetByIdTeacher() throws SQLException {
+    public void testGetByIdTeacher()  {
         Teacher teacher = new Teacher("t1@mail.ru", "Василий Петрович");
         Course course = new Course("java");
         Course course1 = new Course("python");
@@ -305,7 +305,7 @@ public class DaoTest {
         assertEquals(teacher.getCourses().size(), result.get().getCourses().size());
     }
     @Test
-    public void testSaveTeacher() throws SQLException {
+    public void testSaveTeacher()  {
         Teacher teacher = new Teacher("t1@mail.ru", "Василий Петрович");
         Teacher teacher1 = new Teacher("t2@mail.ru", "Павел Алексеевич");
         Teacher teacher2 = new Teacher("t3@mail.ru", "Сергей Владимирович");
@@ -337,7 +337,7 @@ public class DaoTest {
 
 
     @Test
-    public void testUpdateTeacher() throws SQLException {
+    public void testUpdateTeacher(){
         Teacher teacher = new Teacher("t1@mail.ru", "Василий Петрович");
         teacherDao.save(teacher);
         Optional<Teacher> result = teacherDao.getById(teacher.getId());
@@ -358,7 +358,7 @@ public class DaoTest {
 
 
     @Test
-    public void testRemoveTeacher() throws SQLException {
+    public void testRemoveTeacher(){
         Teacher teacher = new Teacher("t1@mail.ru", "Василий Петрович");
         teacherDao.save(teacher);
         Optional<Teacher> result = teacherDao.getById(teacher.getId());
@@ -370,7 +370,7 @@ public class DaoTest {
     }
 
     @Test
-    void testGetAllTeachers() throws SQLException {
+    void testGetAllTeachers() {
         Set<Teacher> expectedTeacher = new HashSet<>();
         Teacher teacher = new Teacher("t1@mail.ru", "Василий Петрович");
         Teacher teacher1 = new Teacher("t2@mail.ru", "Павел Алексеевич");

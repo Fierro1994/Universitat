@@ -25,6 +25,7 @@ import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -63,7 +64,7 @@ class ControllersTest {
     private TeachersController teachersController;
 
     @BeforeAll
-    public static void setUp() throws SQLException, ClassNotFoundException {
+    public static void setUp() throws SQLException {
         MY_SQL_CONTAINER.start();
         connection = DriverManager.getConnection(MY_SQL_CONTAINER.getJdbcUrl(), MY_SQL_CONTAINER.getUsername(), MY_SQL_CONTAINER.getPassword());
         createDBAndDTO = new CreateDBAndDTO(connection);
@@ -100,7 +101,7 @@ class ControllersTest {
     void testDoGetStudent() throws Exception {
         PrintWriter printWriter = mock(PrintWriter.class);
         Map<Integer, StudentDto> responseMap = new HashMap<>();
-        StudentDto studentDto = new StudentDto("1@mail.ru","Виктор",30);
+        StudentDto studentDto = new StudentDto("1@mail.ru", "Виктор", 30);
         studentDto.setId(1L);
         responseMap.put(HttpServletResponse.SC_FOUND, studentDto);
 
@@ -116,8 +117,8 @@ class ControllersTest {
     }
 
     @Test
-    void testDoPost_AddStudent() throws ServletException, IOException {
-        StudentDto studentDto = new StudentDto("2@mail.ru","Василий",30);
+    void testDoPost_AddStudent() throws IOException {
+        StudentDto studentDto = new StudentDto("2@mail.ru", "Василий", 30);
         StringWriter stringWriter = new StringWriter();
         PrintWriter printWriter = new PrintWriter(stringWriter);
         ObjectMapper objectMapper = new ObjectMapper();
@@ -136,8 +137,8 @@ class ControllersTest {
     }
 
     @Test
-    void testDoPut_UpdateStudent() throws ServletException, IOException {
-        StudentDto studentDto = new StudentDto("1@mail.ru","Виктор",30);
+    void testDoPut_UpdateStudent() throws IOException {
+        StudentDto studentDto = new StudentDto("1@mail.ru", "Виктор", 30);
         studentDto.setId(1L);
         Course course = new Course("js");
         Course course2 = new Course("python");
@@ -165,8 +166,9 @@ class ControllersTest {
 
         verify(response, times(1)).setStatus(HttpServletResponse.SC_OK);
     }
+
     @Test
-    void testDoRemove_RemoveStudent() throws ServletException, IOException {
+    void testDoRemove_RemoveStudent() throws IOException {
         PrintWriter printWriter = mock(PrintWriter.class);
 
         when(request.getServletPath()).thenReturn("/removeStudent");
@@ -201,7 +203,7 @@ class ControllersTest {
     }
 
     @Test
-    void testDoPost_AddCourse() throws ServletException, IOException {
+    void testDoPost_AddCourse() throws IOException {
         CourseDto courseDto = new CourseDto("js");
         StringWriter stringWriter = new StringWriter();
         PrintWriter printWriter = new PrintWriter(stringWriter);
@@ -221,7 +223,7 @@ class ControllersTest {
     }
 
     @Test
-    void testDoPut_UpdateCourse() throws ServletException, IOException {
+    void testDoPut_UpdateCourse() throws IOException {
         CourseDto courseDto = new CourseDto("java");
         courseDto.setId(1L);
         Teacher teacher = new Teacher("1t@mail.ru", "Виктор Петрович");
@@ -244,8 +246,9 @@ class ControllersTest {
 
         verify(response, times(1)).setStatus(HttpServletResponse.SC_OK);
     }
+
     @Test
-    void testDoRemove_RemoveCourse() throws ServletException, IOException {
+    void testDoRemove_RemoveCourse() throws IOException {
         PrintWriter printWriter = mock(PrintWriter.class);
 
         when(request.getServletPath()).thenReturn("/removeCourse");
@@ -263,7 +266,7 @@ class ControllersTest {
     void testDoGetTeacher() throws Exception {
         PrintWriter printWriter = mock(PrintWriter.class);
         Map<Integer, TeacherDto> responseMap = new HashMap<>();
-        TeacherDto teacherDto = new TeacherDto("t1@mail.ru","Василий Петрович");
+        TeacherDto teacherDto = new TeacherDto("t1@mail.ru", "Василий Петрович");
         teacherDto.setId(1L);
         responseMap.put(HttpServletResponse.SC_FOUND, teacherDto);
 
@@ -279,8 +282,8 @@ class ControllersTest {
     }
 
     @Test
-    void testDoPost_AddTeacher() throws ServletException, IOException {
-        TeacherDto teacherDto = new TeacherDto("t2@mail.ru","Сергей Петрович");
+    void testDoPost_AddTeacher() throws IOException {
+        TeacherDto teacherDto = new TeacherDto("t2@mail.ru", "Сергей Петрович");
         StringWriter stringWriter = new StringWriter();
         PrintWriter printWriter = new PrintWriter(stringWriter);
         ObjectMapper objectMapper = new ObjectMapper();
@@ -299,8 +302,8 @@ class ControllersTest {
     }
 
     @Test
-    void testDoPut_UpdateTeacher() throws ServletException, IOException {
-        TeacherDto teacherDto = new TeacherDto("t1@mail.ru","Василий Петрович");
+    void testDoPut_UpdateTeacher() throws IOException {
+        TeacherDto teacherDto = new TeacherDto("t1@mail.ru", "Василий Петрович");
         teacherDto.setId(1L);
         Course course = new Course("js");
         Course course2 = new Course("python");
@@ -327,8 +330,9 @@ class ControllersTest {
 
         verify(response, times(1)).setStatus(HttpServletResponse.SC_OK);
     }
+
     @Test
-    void testDoRemove_RemoveTeacher() throws ServletException, IOException {
+    void testDoRemove_RemoveTeacher() throws IOException {
         PrintWriter printWriter = mock(PrintWriter.class);
 
         when(request.getServletPath()).thenReturn("/removeTeacher");
@@ -340,7 +344,6 @@ class ControllersTest {
 
         verify(printWriter, times(1)).print("Teacher 1 removed");
     }
-
 
 
 }

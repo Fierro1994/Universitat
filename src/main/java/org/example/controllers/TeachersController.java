@@ -3,6 +3,7 @@ package org.example.controllers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.example.dto.TeacherDto;
 import org.example.service.TeacherService;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -30,7 +31,7 @@ public class TeachersController extends HttpServlet {
 
     public TeachersController(Connection connection) {
         this.connection = connection;
-        teacherService=new TeacherService(connection);
+        teacherService = new TeacherService(connection);
     }
 
     @Override
@@ -42,9 +43,9 @@ public class TeachersController extends HttpServlet {
         PrintWriter out = response.getWriter();
         String pathParam = request.getServletPath();
         TeacherDto teacherDto = new TeacherDto();
-        Long id =Long.parseLong(request.getParameter("id"));
+        Long id = Long.parseLong(request.getParameter("id"));
         switch (pathParam) {
-            case  "/getTeacher":
+            case "/getTeacher":
                 Map<Integer, TeacherDto> responseMap = teacherService.getTeacher(id);
                 response.setStatus(responseMap.entrySet().stream().findFirst().get().getKey());
                 teacherDto = responseMap.entrySet().stream().findFirst().get().getValue();
@@ -69,7 +70,7 @@ public class TeachersController extends HttpServlet {
         ObjectMapper objectMapper = new ObjectMapper();
         TeacherDto teacherDto = objectMapper.readValue(json, TeacherDto.class);
         switch (pathParam) {
-            case  "/addTeacher":
+            case "/addTeacher":
                 Map<Integer, TeacherDto> responseMap = teacherService.addTeacher(teacherDto);
                 response.setStatus(responseMap.entrySet().stream().findFirst().get().getKey());
                 teacherDto = responseMap.entrySet().stream().findFirst().get().getValue();
@@ -79,7 +80,8 @@ public class TeachersController extends HttpServlet {
         out.close();
 
     }
-    public void doPut(HttpServletRequest request, HttpServletResponse response) throws  IOException {
+
+    public void doPut(HttpServletRequest request, HttpServletResponse response) throws IOException {
         request.setCharacterEncoding("UTF-8");
         response.setContentType("application/json; charset=UTF-8");
         response.setCharacterEncoding("UTF-8");
@@ -92,12 +94,11 @@ public class TeachersController extends HttpServlet {
         TeacherDto teacherDto = objectMapper.readValue(json, TeacherDto.class);
 
 
-
         switch (pathParam) {
-            case  "/updateTeacher":
+            case "/updateTeacher":
                 Map<Integer, TeacherDto> responseMap = teacherService.updateTeacher(teacherDto);
                 response.setStatus(responseMap.entrySet().stream().findFirst().get().getKey());
-                teacherDto= responseMap.entrySet().stream().findFirst().get().getValue();
+                teacherDto = responseMap.entrySet().stream().findFirst().get().getValue();
         }
         out.print(teacherDto.toString());
         out.flush();
@@ -112,9 +113,9 @@ public class TeachersController extends HttpServlet {
         PrintWriter out = response.getWriter();
         String pathParam = request.getServletPath();
         String jsonResponse = "";
-        Long id =Long.parseLong(request.getParameter("id"));
+        Long id = Long.parseLong(request.getParameter("id"));
         switch (pathParam) {
-            case  "/removeTeacher":
+            case "/removeTeacher":
                 jsonResponse = teacherService.removeTeacher(id);
         }
         out.print(jsonResponse);

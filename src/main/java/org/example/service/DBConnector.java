@@ -9,10 +9,10 @@ import java.util.Properties;
 
 public class DBConnector {
     private Properties databaseProperties = getDatabaseProperties();
-    private  String driver = databaseProperties.getProperty("db.driver");
+    private String driver = databaseProperties.getProperty("db.driver");
     private String url = databaseProperties.getProperty("db.url");
-    private  String username = databaseProperties.getProperty("db.username");
-    private  String password = databaseProperties.getProperty("db.password");
+    private String username = databaseProperties.getProperty("db.username");
+    private String password = databaseProperties.getProperty("db.password");
 
 
     public Connection getConnection() {

@@ -78,41 +78,41 @@ public class StudentDao implements CrudDao<Student> {
     public void save(Student student) {
         CourseDao courseDao = new CourseDao(connection);
         Optional<Student> existingStudent = getByEmail(student.getEmail());
-            if (existingStudent.isPresent()) {
-                throw new RuntimeException("Student with email " + student.getEmail() + " already exists");
-            } else {
-                try {
-                    String query = "INSERT INTO students (name_student, email, age) VALUES (?, ?, ?)";
-                    PreparedStatement statement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
-                    statement.setString(1, student.getName());
-                    statement.setString(2, student.getEmail());
-                    statement.setInt(3, student.getAge());
-                    statement.executeUpdate();
-                    ResultSet resultSet = statement.getGeneratedKeys();
-                    if (resultSet.next()) {
-                        student.setId(resultSet.getLong(1));
-                    }
-                } catch (SQLException e) {
-                    e.printStackTrace();
+        if (existingStudent.isPresent()) {
+            throw new RuntimeException("Student with email " + student.getEmail() + " already exists");
+        } else {
+            try {
+                String query = "INSERT INTO students (name_student, email, age) VALUES (?, ?, ?)";
+                PreparedStatement statement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+                statement.setString(1, student.getName());
+                statement.setString(2, student.getEmail());
+                statement.setInt(3, student.getAge());
+                statement.executeUpdate();
+                ResultSet resultSet = statement.getGeneratedKeys();
+                if (resultSet.next()) {
+                    student.setId(resultSet.getLong(1));
                 }
-
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
-            if (student.getCourses() != null){
-                Set<Course> checKCourse = new HashSet<>();
-                for (Course course: student.getCourses()) {
-                    Optional<Course> existingCourse = courseDao.getByName(course.getName());
-                    if (!existingCourse.isPresent()) {
-                        throw new RuntimeException("Course with name " + course.getName() + " not found");
-                    }else {
-                        checKCourse.add(existingCourse.get());
 
-                    }
-
-                }
-                checkAndUpdateStudentCourse(student, checKCourse);
-            }
-        student = getByEmail(student.getEmail()).get();
         }
+        if (student.getCourses() != null) {
+            Set<Course> checKCourse = new HashSet<>();
+            for (Course course : student.getCourses()) {
+                Optional<Course> existingCourse = courseDao.getByName(course.getName());
+                if (!existingCourse.isPresent()) {
+                    throw new RuntimeException("Course with name " + course.getName() + " not found");
+                } else {
+                    checKCourse.add(existingCourse.get());
+
+                }
+
+            }
+            checkAndUpdateStudentCourse(student, checKCourse);
+        }
+        student = getByEmail(student.getEmail()).get();
+    }
 
 
     @Override
@@ -134,13 +134,13 @@ public class StudentDao implements CrudDao<Student> {
                 e.printStackTrace();
             }
 
-            if (student.getCourses() != null){
+            if (student.getCourses() != null) {
                 Set<Course> checKCourse = new HashSet<>();
-                for (Course course: student.getCourses()) {
+                for (Course course : student.getCourses()) {
                     Optional<Course> existingCourse = courseDao.getByName(course.getName());
                     if (!existingCourse.isPresent()) {
                         throw new RuntimeException("Course with name " + course.getName() + " not found");
-                    }else {
+                    } else {
                         checKCourse.add(existingCourse.get());
 
                     }
@@ -156,7 +156,7 @@ public class StudentDao implements CrudDao<Student> {
         Optional<Student> existingStudent = getByEmail(student.getEmail());
         if (!existingStudent.isPresent()) {
             throw new RuntimeException("Student not found");
-        }else {
+        } else {
             try {
                 String query = "DELETE FROM students WHERE id = ?";
                 PreparedStatement statement = connection.prepareStatement(query);
@@ -191,35 +191,35 @@ public class StudentDao implements CrudDao<Student> {
         return Optional.empty();
     }
 
-private Set<Course> getCoursesForStudent(long studentId) throws SQLException {
-    Set<Course> courses = new HashSet<>();
-    String query = "SELECT * FROM students_and_courses WHERE student_id = ?";
-    PreparedStatement statement = connection.prepareStatement(query);
-    statement.setLong(1, studentId);
-    ResultSet resultSet = statement.executeQuery();
-    while (resultSet.next()) {
-        long courseId = resultSet.getLong("course_id");
-        Optional<Course> course = getCourseById(courseId);
-        if (course.isPresent()) {
-            courses.add(course.get());
+    private Set<Course> getCoursesForStudent(long studentId) throws SQLException {
+        Set<Course> courses = new HashSet<>();
+        String query = "SELECT * FROM students_and_courses WHERE student_id = ?";
+        PreparedStatement statement = connection.prepareStatement(query);
+        statement.setLong(1, studentId);
+        ResultSet resultSet = statement.executeQuery();
+        while (resultSet.next()) {
+            long courseId = resultSet.getLong("course_id");
+            Optional<Course> course = getCourseById(courseId);
+            if (course.isPresent()) {
+                courses.add(course.get());
+            }
         }
+        return courses;
     }
-    return courses;
-}
 
-private Optional<Course> getCourseById(long courseId) throws SQLException {
-    String query = "SELECT * FROM courses WHERE id = ?";
-    PreparedStatement statement = connection.prepareStatement(query);
-    statement.setLong(1, courseId);
-    ResultSet resultSet = statement.executeQuery();
-    if (resultSet.next()) {
-        Course course = new Course();
-        course.setId(resultSet.getLong("id"));
-        course.setName(resultSet.getString("name_course"));
-        return Optional.of(course);
+    private Optional<Course> getCourseById(long courseId) throws SQLException {
+        String query = "SELECT * FROM courses WHERE id = ?";
+        PreparedStatement statement = connection.prepareStatement(query);
+        statement.setLong(1, courseId);
+        ResultSet resultSet = statement.executeQuery();
+        if (resultSet.next()) {
+            Course course = new Course();
+            course.setId(resultSet.getLong("id"));
+            course.setName(resultSet.getString("name_course"));
+            return Optional.of(course);
+        }
+        return Optional.empty();
     }
-    return Optional.empty();
-}
 
 
     private void checkAndUpdateStudentCourse(Student student, Set<Course> courses) {

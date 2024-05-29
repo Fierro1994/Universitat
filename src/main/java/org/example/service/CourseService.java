@@ -4,6 +4,7 @@ import org.example.Dao.CourseDao;
 import org.example.dto.CourseDto;
 import org.example.mappers.CourseMapper;
 import org.example.models.Course;
+
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.Connection;
@@ -22,14 +23,14 @@ public class CourseService {
         courseDao = new CourseDao(connection);
     }
 
-    public   Map<Integer, CourseDto> getCourse(Long id) {
+    public Map<Integer, CourseDto> getCourse(Long id) {
         Map<Integer, CourseDto> jsonResponse = new HashMap<>();
         CourseDto courseDto = new CourseDto();
         Optional<Course> course = courseDao.getById(id);
-        if (course.isPresent()){
+        if (course.isPresent()) {
             courseDto = CourseMapper.mapCourse.toDto(course.get());
             jsonResponse.put(HttpServletResponse.SC_FOUND, courseDto);
-        }else {
+        } else {
             jsonResponse.put(HttpServletResponse.SC_NOT_FOUND, null);
         }
         return jsonResponse;
@@ -39,7 +40,7 @@ public class CourseService {
         return courseDao.getAll();
     }
 
-    public  Map<Integer, CourseDto> addCourse(CourseDto courseDto) throws IOException {
+    public Map<Integer, CourseDto> addCourse(CourseDto courseDto) throws IOException {
         Map<Integer, CourseDto> jsonResponse = new HashMap<>();
         Course course = CourseMapper.mapCourse.fromDto(courseDto);
         courseDao.save(course);

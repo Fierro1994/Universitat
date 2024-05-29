@@ -3,26 +3,28 @@ package org.example.Dao;
 import org.example.Dao.interfaceDao.CrudDao;
 import org.example.models.Course;
 import org.example.models.Teacher;
+
 import java.sql.*;
 import java.util.*;
 
 public class TeacherDao implements CrudDao<Teacher> {
     private final String DB_NAME = "dbmelody";
     private Connection connection;
+
     public TeacherDao(Connection connection) {
         this.connection = connection;
         init();
     }
 
-   private void init(){
-       try {
-           String initSQL = "USE " + DB_NAME + ";";
-           PreparedStatement statement = connection.prepareStatement(initSQL);
-           statement.execute();
-       } catch (SQLException e) {
-           e.printStackTrace();
-       }
-   }
+    private void init() {
+        try {
+            String initSQL = "USE " + DB_NAME + ";";
+            PreparedStatement statement = connection.prepareStatement(initSQL);
+            statement.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
     @Override
     public Optional<Teacher> getById(Long id) {
@@ -90,8 +92,7 @@ public class TeacherDao implements CrudDao<Teacher> {
                             Optional<Course> existingCourse = getCourseByName(course.getName());
                             if (existingCourse.isPresent()) {
                                 updateTeacherCourse(teacher, existingCourse.get());
-                            }
-                            else {
+                            } else {
                                 throw new RuntimeException("Course with name " + course.getName() + " not found");
                             }
                         }
@@ -119,19 +120,19 @@ public class TeacherDao implements CrudDao<Teacher> {
             } catch (SQLException e) {
                 e.printStackTrace();
             }
-            if (teacher.getCourses() != null){
-                for (Course course: teacher.getCourses()) {
+            if (teacher.getCourses() != null) {
+                for (Course course : teacher.getCourses()) {
                     Optional<Course> existingCourse = courseDao.getByName(course.getName());
                     if (!existingCourse.isPresent()) {
                         throw new RuntimeException("Course with name " + course.getName() + " not found");
-                    }else {
+                    } else {
                         updateTeacherCourse(teacher, existingCourse.get());
                     }
                 }
 
             }
-            }
-            teacher = getByEmail(teacher.getEmail()).get();
+        }
+        teacher = getByEmail(teacher.getEmail()).get();
     }
 
     @Override
@@ -139,7 +140,7 @@ public class TeacherDao implements CrudDao<Teacher> {
         Optional<Teacher> existingTeacher = getByEmail(teacher.getEmail());
         if (!existingTeacher.isPresent()) {
             throw new RuntimeException("Teacher not found");
-        }else {
+        } else {
             try {
                 String query = "DELETE FROM teachers WHERE id = ?";
                 PreparedStatement statement = connection.prepareStatement(query);
@@ -201,8 +202,9 @@ public class TeacherDao implements CrudDao<Teacher> {
             course.setName(resultSet.getString("name_course"));
             return Optional.of(course);
         }
-        return Optional.empty() ;
+        return Optional.empty();
     }
+
     private void updateTeacherCourse(Teacher teacher, Course course) {
         try {
             String query = "UPDATE courses SET teacher_id = ? WHERE id = ?";

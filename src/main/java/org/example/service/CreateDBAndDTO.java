@@ -9,7 +9,8 @@ public class CreateDBAndDTO {
     private static final String SQL_CREATE_DB = "CREATE DATABASE dbmelody CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;;";
     private static final String SQL_DROP_DB = "DROP DATABASE dbmelody;";
     private Connection connection;
-    public CreateDBAndDTO(Connection connection){
+
+    public CreateDBAndDTO(Connection connection) {
         this.connection = connection;
     }
 
@@ -58,7 +59,7 @@ public class CreateDBAndDTO {
         String SQLOneToManyTeacherCourses = "ALTER TABLE dbmelody.courses ADD FOREIGN KEY (teacher_id) REFERENCES dbmelody.teachers(id) ON DELETE SET NULL";
 
 
-        try  {
+        try {
             statement = connection.createStatement();
             statement.execute(SQL_CREATE_DB);
             statement.execute(initSQL);
