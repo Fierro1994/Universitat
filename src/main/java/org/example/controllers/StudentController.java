@@ -6,7 +6,7 @@ import org.example.service.StudentsService;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.sql.Connection;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import javax.servlet.annotation.WebServlet;
@@ -26,23 +26,22 @@ import javax.servlet.http.HttpServletResponse;
                 "/addStudent",
                 "/updateStudent",
                 "/removeStudent",
-                "/getStudent"
+                "/getStudent",
+                "/getAllStudents"
         })
 public class StudentController extends HttpServlet {
 
-    private Connection connection;
-    private StudentsService studentsService;
+    private StudentsService studentsService = new StudentsService();
 
-    public StudentController(Connection connection) {
-        this.connection = connection;
-        studentsService = new StudentsService(connection);
-    }
     /**
      * Обработка запроса GET.
      * @param request запрос
      * @param response ответ
      * @throws IOException исключение
      */
+
+
+
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
@@ -52,16 +51,27 @@ public class StudentController extends HttpServlet {
         PrintWriter out = response.getWriter();
         String pathParam = request.getServletPath();
         Long id = Long.parseLong(request.getParameter("id"));
-        StudentDto studentDto = new StudentDto();
+        StudentDto studentDto;
+        List<StudentDto> studentDtoList;
         switch (pathParam) {
             case "/getStudent":
                 Map<Integer, StudentDto> responseMap = studentsService.getStudent(id);
                 response.setStatus(responseMap.entrySet().stream().findFirst().get().getKey());
                 studentDto = responseMap.entrySet().stream().findFirst().get().getValue();
+                out.print(studentDto.toString());
+                out.flush();
+                out.close();
+                break;
+            case "/getAllStudents":
+                Map<Integer, List<StudentDto>> responseMapList = studentsService.getAll();
+                response.setStatus(responseMapList.entrySet().stream().findFirst().get().getKey());
+                studentDtoList = responseMapList.entrySet().stream().findFirst().get().getValue();
+                out.print(studentDtoList);
+                out.flush();
+                out.close();
+                break;
         }
-        out.print(studentDto.toString());
-        out.flush();
-        out.close();
+
     }
 
     /**

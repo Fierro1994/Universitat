@@ -6,7 +6,7 @@ import org.example.service.CourseService;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.sql.Connection;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import javax.servlet.annotation.WebServlet;
@@ -26,20 +26,12 @@ import javax.servlet.http.HttpServletResponse;
                 "/addCourse",
                 "/updateCourse",
                 "/removeCourse",
-                "/getCourse"
+                "/getCourse",
+                "/getAllCourses"
         })
 public class CourseController extends HttpServlet {
-    private Connection connection;
-    private CourseService courseService;
+    private CourseService courseService = new CourseService();
 
-    /**
-     * Конструктор класса.
-     * @param connection подключение к базе данных
-     */
-    public CourseController(Connection connection) {
-        this.connection = connection;
-        courseService = new CourseService(connection);
-    }
     /**
      * Обработчик GET-запроса.
      * @param request объект запроса
@@ -56,6 +48,7 @@ public class CourseController extends HttpServlet {
         String pathParam = request.getServletPath();
         Long id = Long.parseLong(request.getParameter("id"));
         CourseDto courseDto;
+        List<CourseDto> courseDtoList;
         switch (pathParam) {
             case "/getCourse":
                 Map<Integer, CourseDto> responseMap = courseService.getCourse(id);
@@ -64,6 +57,15 @@ public class CourseController extends HttpServlet {
                 out.print(courseDto.toString());
                 out.flush();
                 out.close();
+                break;
+            case "/getAllCourses":
+                Map<Integer, List<CourseDto>> responseMapList = courseService.getAll();
+                response.setStatus(responseMapList.entrySet().stream().findFirst().get().getKey());
+                courseDtoList = responseMapList.entrySet().stream().findFirst().get().getValue();
+                out.print(courseDtoList);
+                out.flush();
+                out.close();
+                break;
         }
     }
 
@@ -92,6 +94,7 @@ public class CourseController extends HttpServlet {
                 Map<Integer, CourseDto> responseMap = courseService.addCourse(courseDto);
                 response.setStatus(responseMap.entrySet().stream().findFirst().get().getKey());
                 courseDto = responseMap.entrySet().stream().findFirst().get().getValue();
+                break;
         }
         out.println(courseDto.toString());
         out.flush();
@@ -121,6 +124,7 @@ public class CourseController extends HttpServlet {
                 Map<Integer, CourseDto> responseMap = courseService.updateCourse(courseDto);
                 response.setStatus(responseMap.entrySet().stream().findFirst().get().getKey());
                 courseDto = responseMap.entrySet().stream().findFirst().get().getValue();
+                break;
         }
         out.println(courseDto);
         out.flush();
@@ -143,6 +147,7 @@ public class CourseController extends HttpServlet {
         switch (pathParam) {
             case "/removeCourse":
                 jsonResponse = courseService.removeCourse(id);
+                break;
         }
         out.print(jsonResponse);
         out.flush();

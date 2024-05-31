@@ -1,9 +1,10 @@
 package org.example.Dao;
 
 import org.example.Dao.interfaceDao.CrudDao;
+import org.example.Exceptions.EntityNotFoundException;
+import org.example.Exceptions.ExistEntityException;
 import org.example.models.Course;
 import org.example.models.Student;
-
 import java.sql.*;
 import java.util.*;
 /**
@@ -13,7 +14,6 @@ public class StudentDao implements CrudDao<Student> {
 
     private final String DB_NAME = "dbmelody";
     private Connection connection;
-
     public StudentDao(Connection connection) {
         this.connection = connection;
         init();
@@ -38,7 +38,6 @@ public class StudentDao implements CrudDao<Student> {
      */
     @Override
     public Optional<Student> getById(Long id) {
-
         try {
             String query = "SELECT * FROM students WHERE id = ?";
             PreparedStatement statement = connection.prepareStatement(query);
@@ -92,11 +91,11 @@ public class StudentDao implements CrudDao<Student> {
      * @param student объект студента для сохранения
      */
     @Override
-    public void save(Student student) {
+    public void save(Student student) throws ExistEntityException, EntityNotFoundException {
         CourseDao courseDao = new CourseDao(connection);
         Optional<Student> existingStudent = getByEmail(student.getEmail());
         if (existingStudent.isPresent()) {
-            throw new RuntimeException("Student with email " + student.getEmail() + " already exists");
+            throw new ExistEntityException("Student with email " + student.getEmail() + " already exists");
         } else {
             try {
                 String query = "INSERT INTO students (name_student, email, age) VALUES (?, ?, ?)";
@@ -119,7 +118,7 @@ public class StudentDao implements CrudDao<Student> {
             for (Course course : student.getCourses()) {
                 Optional<Course> existingCourse = courseDao.getByName(course.getName());
                 if (!existingCourse.isPresent()) {
-                    throw new RuntimeException("Course with name " + course.getName() + " not found");
+                    throw new EntityNotFoundException("Course with name " + course.getName() + " not found");
                 } else {
                     checKCourse.add(existingCourse.get());
 
@@ -137,11 +136,11 @@ public class StudentDao implements CrudDao<Student> {
      * @param student объект студента с обновленными данными
      */
     @Override
-    public void update(Student student) {
+    public void update(Student student) throws EntityNotFoundException {
         CourseDao courseDao = new CourseDao(connection);
         Optional<Student> existingStudent = getByEmail(student.getEmail());
         if (!existingStudent.isPresent()) {
-            throw new RuntimeException("Student with email " + student.getEmail() + " not found");
+            throw new EntityNotFoundException("Student with email " + student.getEmail() + " not found");
         } else {
             try {
                 String query = "UPDATE students SET name_student = ?, email = ?, age = ? WHERE id = ?";
@@ -160,7 +159,7 @@ public class StudentDao implements CrudDao<Student> {
                 for (Course course : student.getCourses()) {
                     Optional<Course> existingCourse = courseDao.getByName(course.getName());
                     if (!existingCourse.isPresent()) {
-                        throw new RuntimeException("Course with name " + course.getName() + " not found");
+                        throw new EntityNotFoundException("Course with name " + course.getName() + " not found");
                     } else {
                         checKCourse.add(existingCourse.get());
 
@@ -177,10 +176,10 @@ public class StudentDao implements CrudDao<Student> {
      * @param student объект студента для удаления
      */
     @Override
-    public void remove(Student student) {
+    public void remove(Student student) throws EntityNotFoundException {
         Optional<Student> existingStudent = getByEmail(student.getEmail());
         if (!existingStudent.isPresent()) {
-            throw new RuntimeException("Student not found");
+            throw new EntityNotFoundException("Student not found");
         } else {
             try {
                 String query = "DELETE FROM students WHERE id = ?";

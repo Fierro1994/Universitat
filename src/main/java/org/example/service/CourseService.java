@@ -1,34 +1,24 @@
 package org.example.service;
 
 import org.example.Dao.CourseDao;
+import org.example.Exceptions.EntityNotFoundException;
+import org.example.Exceptions.ExistEntityException;
 import org.example.dto.CourseDto;
 import org.example.mappers.CourseMapper;
 import org.example.models.Course;
-
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.Connection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
+
 /**
  * Класс для реализации бизнесс логики курсов.
  */
 public class CourseService {
+    private DBConnector dbConnector = new DBConnector();
+    private Connection connection = dbConnector.getConnection();
+    private CourseDao courseDao = new CourseDao(connection);
 
-    private Connection connection;
-    private CourseDao courseDao;
-
-    /**
-     * Создает новый экземпляр CourseService.
-     *
-     * @param connection подключение к базе данных
-     */
-    public CourseService(Connection connection) {
-        this.connection = connection;
-        courseDao = new CourseDao(connection);
-    }
     /**
      * Получает курс по его идентификатору.
      *
@@ -37,7 +27,7 @@ public class CourseService {
      */
     public Map<Integer, CourseDto> getCourse(Long id) {
         Map<Integer, CourseDto> jsonResponse = new HashMap<>();
-        CourseDto courseDto = new CourseDto();
+        CourseDto courseDto;
         Optional<Course> course = courseDao.getById(id);
         if (course.isPresent()) {
             courseDto = CourseMapper.mapCourse.toDto(course.get());
@@ -53,10 +43,23 @@ public class CourseService {
      *
      * @return набор курсов
      */
-    public Set<Course> getAll() {
-        return courseDao.getAll();
-    }
+    public Map<Integer, List<CourseDto>> getAll() {
+        Map<Integer, List<CourseDto>> jsonResponse = new HashMap<>();
+        CourseDto courseDto;
+        Set<Course> courseSet = courseDao.getAll();
+        List<CourseDto> courseDtoList = new ArrayList<>();
+        for (Course course : courseSet) {
+            courseDto = CourseMapper.mapCourse.toDto(course);
+            courseDtoList.add(courseDto);
+        }
+        if (!courseSet.isEmpty()) {
+            jsonResponse.put(HttpServletResponse.SC_FOUND, courseDtoList);
+        } else {
+            jsonResponse.put(HttpServletResponse.SC_NOT_FOUND, null);
+        }
 
+        return jsonResponse;
+    }
     /**
      * Добавляет новый курс.
      *
@@ -64,10 +67,16 @@ public class CourseService {
      * @return Map с информацией о добавленном курсе и его статусом (SC_CREATED или SC_CONFLICT)
      * @throws IOException если возникла ошибка при работе с базой данных
      */
-    public Map<Integer, CourseDto> addCourse(CourseDto courseDto) throws IOException {
+    public Map<Integer, CourseDto> addCourse(CourseDto courseDto) {
         Map<Integer, CourseDto> jsonResponse = new HashMap<>();
         Course course = CourseMapper.mapCourse.fromDto(courseDto);
-        courseDao.save(course);
+        try {
+            courseDao.save(course);
+        } catch (ExistEntityException e) {
+            throw new RuntimeException(e);
+        } catch (EntityNotFoundException e) {
+            throw new RuntimeException(e);
+        }
         if (course.getId() != null) {
             courseDto.setId(course.getId());
             jsonResponse.put(HttpServletResponse.SC_CREATED, courseDto);
@@ -83,10 +92,14 @@ public class CourseService {
      * @param courseDto объект CourseDto с информацией о курсе
      * @return Map с информацией об обновленном курсе и его статусом (SC_OK)
      */
-    public Map<Integer, CourseDto> updateCourse(CourseDto courseDto) {
+    public Map<Integer, CourseDto> updateCourse(CourseDto courseDto)  {
         Map<Integer, CourseDto> jsonResponse = new HashMap<>();
         Course course = CourseMapper.mapCourse.fromDto(courseDto);
-        courseDao.update(course);
+        try {
+            courseDao.update(course);
+        } catch (EntityNotFoundException e) {
+            throw new RuntimeException(e);
+        }
         courseDto = CourseMapper.mapCourse.toDto(course);
         jsonResponse.put(HttpServletResponse.SC_OK, courseDto);
         return jsonResponse;
@@ -108,4 +121,5 @@ public class CourseService {
         }
         return jsonResponse;
     }
+
 }

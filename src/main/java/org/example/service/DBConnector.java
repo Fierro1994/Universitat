@@ -10,18 +10,27 @@ import java.util.Properties;
  * Класс для подключения к базе данных.
  */
 public class DBConnector {
-    private Properties databaseProperties = getDatabaseProperties();
-    private String driver = databaseProperties.getProperty("db.driver");
-    private String url = databaseProperties.getProperty("db.url");
-    private String username = databaseProperties.getProperty("db.username");
-    private String password = databaseProperties.getProperty("db.password");
-
+    private String driver;
+    private String url;
+    private String username;
+    private String password;
     /**
      * Получает подключение к базе данных.
      *
      * @return подключение к базе данных
      */
     public Connection getConnection() {
+        Properties properties = new Properties();
+        InputStream inputStream = DBConnector.class.getClassLoader().getResourceAsStream("application.properties");
+        try {
+            properties.load(inputStream);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        driver = properties.getProperty("db.driver");
+        url = properties.getProperty("db.url");
+        username = properties.getProperty("db.username");
+        password = properties.getProperty("db.password");
         try {
             Class.forName(driver);
         } catch (ClassNotFoundException e) {
@@ -40,19 +49,27 @@ public class DBConnector {
         }
         return connection;
     }
-    /**
-     * Получает свойства базы данных из файла application.properties.
-     *
-     * @return свойства базы данных
-     */
-    private static Properties getDatabaseProperties() {
-        Properties properties = new Properties();
-        InputStream inputStream = DBConnector.class.getClassLoader().getResourceAsStream("application.properties");
+
+
+
+
+    public Connection getConnectionWithCustomProperties(String driver, String url, String username, String password){
         try {
-            properties.load(inputStream);
-        } catch (IOException e) {
-            e.printStackTrace();
+            Class.forName(driver);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
-        return properties;
+        Connection connection = null;
+        try {
+            connection = DriverManager.getConnection(url, username, password);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        try {
+            connection.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return connection;
     }
 }

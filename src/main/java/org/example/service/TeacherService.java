@@ -1,28 +1,24 @@
 package org.example.service;
 
 import org.example.Dao.TeacherDao;
+import org.example.Exceptions.EntityNotFoundException;
+import org.example.Exceptions.ExistEntityException;
 import org.example.dto.TeacherDto;
 import org.example.mappers.TeacherMapper;
 import org.example.models.Teacher;
-
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.Connection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
+
 /**
  * Класс для реализации бизнесс логики преподавателей.
  */
 public class TeacherService {
-    private final TeacherDao teacherDao;
-    private Connection connection;
+    private DBConnector dbConnector = new DBConnector();
+    private Connection connection = dbConnector.getConnection();
+    private TeacherDao teacherDao = new TeacherDao(connection);
 
-    public TeacherService(Connection connection) {
-        this.connection = connection;
-        teacherDao = new TeacherDao(connection);
-    }
     /**
      * Метод для получения информации о преподавателе по его идентификатору.
      * @param id - идентификатор преподавателя
@@ -30,7 +26,7 @@ public class TeacherService {
      */
     public Map<Integer, TeacherDto> getTeacher(Long id) {
         Map<Integer, TeacherDto> jsonResponse = new HashMap<>();
-        TeacherDto teacherDto = new TeacherDto();
+        TeacherDto teacherDto;
         Optional<Teacher> teacher = teacherDao.getById(id);
         if (teacher.isPresent()) {
             teacherDto = TeacherMapper.mapTeacher.toDto(teacher.get());
@@ -45,8 +41,22 @@ public class TeacherService {
      * Метод для получения всех преподавателей из базы данных.
      * @return - Set объектов преподавателей
      */
-    public Set<Teacher> getAll() {
-        return teacherDao.getAll();
+    public Map<Integer, List<TeacherDto>> getAll() {
+        Map<Integer, List<TeacherDto>> jsonResponse = new HashMap<>();
+        TeacherDto teacherDto;
+        Set<Teacher> teacherSet = teacherDao.getAll();
+        List<TeacherDto> teacherDtoList = new ArrayList<>();
+        for (Teacher teacher : teacherSet) {
+            teacherDto = TeacherMapper.mapTeacher.toDto(teacher);
+            teacherDtoList.add(teacherDto);
+        }
+        if (!teacherSet.isEmpty()) {
+            jsonResponse.put(HttpServletResponse.SC_FOUND, teacherDtoList);
+        } else {
+            jsonResponse.put(HttpServletResponse.SC_NOT_FOUND, null);
+        }
+
+        return jsonResponse;
     }
 
     /**
@@ -55,10 +65,14 @@ public class TeacherService {
      * @return - Map, содержащая статус HTTP и объект DTO преподавателя, если преподаватель успешно добавлен, или null, если добавление преподавателя не удалось
      * @throws IOException - если при добавлении преподавателя возникает исключение
      */
-    public Map<Integer, TeacherDto> addTeacher(TeacherDto teacherDto) throws IOException {
+    public Map<Integer, TeacherDto> addTeacher(TeacherDto teacherDto) {
         Map<Integer, TeacherDto> jsonResponse = new HashMap<>();
         Teacher teacher = TeacherMapper.mapTeacher.fromDto(teacherDto);
-        teacherDao.save(teacher);
+        try {
+            teacherDao.save(teacher);
+        } catch (ExistEntityException e) {
+            throw new RuntimeException(e);
+        }
 
         if (teacher.getId() != null) {
             teacherDto.setId(teacher.getId());
@@ -78,7 +92,11 @@ public class TeacherService {
     public Map<Integer, TeacherDto> updateTeacher(TeacherDto teacherDto) {
         Map<Integer, TeacherDto> jsonResponse = new HashMap<>();
         Teacher teacher = TeacherMapper.mapTeacher.fromDto(teacherDto);
-        teacherDao.update(teacher);
+        try {
+            teacherDao.update(teacher);
+        } catch (EntityNotFoundException e) {
+            throw new RuntimeException(e);
+        }
         teacherDto = TeacherMapper.mapTeacher.toDto(teacher);
         jsonResponse.put(HttpServletResponse.SC_OK, teacherDto);
         return jsonResponse;
@@ -93,7 +111,11 @@ public class TeacherService {
         String jsonResponse = "";
         Optional<Teacher> teacher = teacherDao.getById(id);
         if (teacher.get().getId() != null) {
-            teacherDao.remove(teacher.get());
+            try {
+                teacherDao.remove(teacher.get());
+            } catch (EntityNotFoundException e) {
+                throw new RuntimeException(e);
+            }
             jsonResponse = "Teacher " + id + " removed";
         } else {
             jsonResponse = "Teacher " + id + " not found";

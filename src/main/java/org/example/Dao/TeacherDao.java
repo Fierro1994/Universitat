@@ -1,6 +1,8 @@
 package org.example.Dao;
 
 import org.example.Dao.interfaceDao.CrudDao;
+import org.example.Exceptions.EntityNotFoundException;
+import org.example.Exceptions.ExistEntityException;
 import org.example.models.Course;
 import org.example.models.Teacher;
 
@@ -12,8 +14,7 @@ import java.util.*;
 public class TeacherDao implements CrudDao<Teacher> {
     private final String DB_NAME = "dbmelody";
     private Connection connection;
-
-    public TeacherDao(Connection connection) {
+    public TeacherDao (Connection connection){
         this.connection = connection;
         init();
     }
@@ -89,10 +90,10 @@ public class TeacherDao implements CrudDao<Teacher> {
      * @param teacher преподаватель для сохранения
      */
     @Override
-    public void save(Teacher teacher) {
+    public void save(Teacher teacher) throws ExistEntityException {
         Optional<Teacher> existingTeacher = getByEmail(teacher.getEmail());
         if (existingTeacher.isPresent()) {
-            throw new RuntimeException("Teacher with email " + teacher.getEmail() + " already exists");
+            throw new ExistEntityException("Teacher with email " + teacher.getEmail() + " already exists");
         } else {
             try {
                 String query = "INSERT INTO teachers (name_teacher, email) VALUES (?, ?)";
@@ -110,13 +111,15 @@ public class TeacherDao implements CrudDao<Teacher> {
                             if (existingCourse.isPresent()) {
                                 updateTeacherCourse(teacher, existingCourse.get());
                             } else {
-                                throw new RuntimeException("Course with name " + course.getName() + " not found");
+                                throw new EntityNotFoundException("Course with name " + course.getName() + " not found");
                             }
                         }
                     }
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
+            } catch (EntityNotFoundException e) {
+                throw new RuntimeException(e);
             }
         }
     }
@@ -126,11 +129,11 @@ public class TeacherDao implements CrudDao<Teacher> {
      * @param teacher преподатель для обновления
      */
     @Override
-    public void update(Teacher teacher) {
+    public void update(Teacher teacher) throws EntityNotFoundException {
         CourseDao courseDao = new CourseDao(connection);
         Optional<Teacher> existingTeacher = getByEmail(teacher.getEmail());
         if (!existingTeacher.isPresent()) {
-            throw new RuntimeException("Teacher with email " + teacher.getEmail() + " not found");
+            throw new EntityNotFoundException("Teacher with email " + teacher.getEmail() + " not found");
         } else {
             try {
                 String query = "UPDATE teachers SET name_teacher = ? WHERE id = ?";
@@ -145,7 +148,7 @@ public class TeacherDao implements CrudDao<Teacher> {
                 for (Course course : teacher.getCourses()) {
                     Optional<Course> existingCourse = courseDao.getByName(course.getName());
                     if (!existingCourse.isPresent()) {
-                        throw new RuntimeException("Course with name " + course.getName() + " not found");
+                        throw new EntityNotFoundException("Course with name " + course.getName() + " not found");
                     } else {
                         updateTeacherCourse(teacher, existingCourse.get());
                     }
@@ -161,10 +164,10 @@ public class TeacherDao implements CrudDao<Teacher> {
      * @param teacher преподаватель для удаления
      */
     @Override
-    public void remove(Teacher teacher) {
+    public void remove(Teacher teacher) throws EntityNotFoundException {
         Optional<Teacher> existingTeacher = getByEmail(teacher.getEmail());
         if (!existingTeacher.isPresent()) {
-            throw new RuntimeException("Teacher not found");
+            throw new EntityNotFoundException("Teacher not found");
         } else {
             try {
                 String query = "DELETE FROM teachers WHERE id = ?";

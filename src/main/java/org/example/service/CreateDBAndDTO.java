@@ -12,14 +12,8 @@ public class CreateDBAndDTO {
     private static final String SQL_CREATE_DB = "CREATE DATABASE dbmelody CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;;";
     private static final String SQL_DROP_DB = "DROP DATABASE dbmelody;";
     private Connection connection;
-
-    /**
-     * Конструктор класса CreateDBAndDTO.
-     *
-     * @param connection подключение к базе данных
-     */
-    public CreateDBAndDTO(Connection connection) {
-        this.connection = connection;
+    public CreateDBAndDTO(Connection connection){
+        this.connection =  connection;
     }
 
     /**

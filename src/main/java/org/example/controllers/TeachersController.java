@@ -6,7 +6,7 @@ import org.example.service.TeacherService;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.sql.Connection;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import javax.servlet.annotation.WebServlet;
@@ -27,16 +27,11 @@ import javax.servlet.http.HttpServletResponse;
                 "/updateTeacher",
                 "/removeTeacher",
                 "/getTeacher",
+                "/getAllTeachers"
         })
 public class TeachersController extends HttpServlet {
+    private TeacherService teacherService = new TeacherService();
 
-    private Connection connection;
-    private TeacherService teacherService;
-
-    public TeachersController(Connection connection) {
-        this.connection = connection;
-        teacherService = new TeacherService(connection);
-    }
     /**
      * Обработка запроса GET.
      * @param request запрос
@@ -53,15 +48,26 @@ public class TeachersController extends HttpServlet {
         String pathParam = request.getServletPath();
         TeacherDto teacherDto = new TeacherDto();
         Long id = Long.parseLong(request.getParameter("id"));
+        List<TeacherDto> teacherDtoList;
         switch (pathParam) {
             case "/getTeacher":
                 Map<Integer, TeacherDto> responseMap = teacherService.getTeacher(id);
                 response.setStatus(responseMap.entrySet().stream().findFirst().get().getKey());
                 teacherDto = responseMap.entrySet().stream().findFirst().get().getValue();
+                out.print(teacherDto.toString());
+                out.flush();
+                out.close();
+                break;
+            case "/getAllTeachers":
+                Map<Integer, List<TeacherDto>> responseMapList = teacherService.getAll();
+                response.setStatus(responseMapList.entrySet().stream().findFirst().get().getKey());
+                teacherDtoList = responseMapList.entrySet().stream().findFirst().get().getValue();
+                out.print(teacherDtoList);
+                out.flush();
+                out.close();
+                break;
         }
-        out.print(teacherDto.toString());
-        out.flush();
-        out.close();
+
     }
 
     /**

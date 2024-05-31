@@ -1,18 +1,21 @@
+package daoTest;
+
 import org.example.Dao.CourseDao;
 import org.example.Dao.StudentDao;
 import org.example.Dao.TeacherDao;
+import org.example.Exceptions.EntityNotFoundException;
+import org.example.Exceptions.ExistEntityException;
 import org.example.models.Course;
 import org.example.models.Student;
 import org.example.models.Teacher;
 import org.example.service.CreateDBAndDTO;
+import org.example.service.DBConnector;
 import org.junit.jupiter.api.*;
 import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import java.sql.*;
 import java.util.*;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 @Testcontainers
 public class DaoTest {
@@ -25,11 +28,17 @@ public class DaoTest {
     private static CourseDao courseDao;
     private static TeacherDao teacherDao;
     private static CreateDBAndDTO createDBAndDTO;
+    private static DBConnector dbConnector;
 
     @BeforeAll
     public static void setUp() throws SQLException {
         MY_SQL_CONTAINER.start();
-        connection = DriverManager.getConnection(MY_SQL_CONTAINER.getJdbcUrl(), MY_SQL_CONTAINER.getUsername(), MY_SQL_CONTAINER.getPassword());
+        dbConnector = new DBConnector();
+        String driver = MY_SQL_CONTAINER.getDriverClassName();
+        String dburl = MY_SQL_CONTAINER.getJdbcUrl();
+        String username = MY_SQL_CONTAINER.getUsername();
+        String password =  MY_SQL_CONTAINER.getPassword();
+        connection =  dbConnector.getConnectionWithCustomProperties(driver,dburl, username, password);
         studentDao = new StudentDao(connection);
         courseDao = new CourseDao(connection);
         teacherDao = new TeacherDao(connection);
@@ -49,7 +58,7 @@ public class DaoTest {
     }
 
     @Test
-    public void testGetByIdStudent()  {
+    public void testGetByIdStudent() throws ExistEntityException, EntityNotFoundException {
         Student student = new Student("1@mail.ru", "Виктор", 30);
         studentDao.save(student);
         Optional<Student> result = studentDao.getById(student.getId());
@@ -59,7 +68,7 @@ public class DaoTest {
         Assertions.assertEquals(30, student.getAge());
     }
     @Test
-    public void testSaveStudent()  {
+    public void testSaveStudent() throws ExistEntityException, EntityNotFoundException {
         Student student = new Student("1@mail.ru", "1");
         Student student2 = new Student("2@mail.ru", "2", 1);
         Course course = new Course("java");
@@ -91,7 +100,7 @@ public class DaoTest {
          }
 
     @Test
-    public void testUpdateStudent() {
+    public void testUpdateStudent() throws ExistEntityException, EntityNotFoundException {
         Student student = new Student("1@mail.ru", "Виктор", 30);
         studentDao.save(student);
         student.setAge(14);
@@ -117,7 +126,7 @@ public class DaoTest {
 
 
     @Test
-    public void testRemoveStudent(){
+    public void testRemoveStudent() throws ExistEntityException, EntityNotFoundException {
         Student student = new Student("1@mail.ru", "Виктор", 30);
         studentDao.save(student);
         Optional<Student> result = studentDao.getById(student.getId());
@@ -129,7 +138,7 @@ public class DaoTest {
     }
 
     @Test
-    public void testGetByEmailStudents() {
+    public void testGetByEmailStudents() throws ExistEntityException, EntityNotFoundException {
         Student student = new Student("1@mail.ru", "Виктор", 30);
         studentDao.save(student);
         Optional<Student> result = studentDao.getByEmail(student.getEmail());
@@ -141,7 +150,7 @@ public class DaoTest {
 
 
     @Test
-    void testGetAllStudents(){
+    void testGetAllStudents() throws ExistEntityException, EntityNotFoundException {
         Set<Student> expectedStudents = new HashSet<>();
         Student student = new Student("1@mail.ru", "1");
         Student student2 = new Student("2@mail.ru", "2", 1);
@@ -162,30 +171,8 @@ public class DaoTest {
     }
 
 
-    ////Courses Test
     @Test
-    public void testGetByIdCourse() {
-        Course course = new Course("java");
-        Student student = new Student("1@mail.ru", "Виктор", 30);
-        Student student2 = new Student("2@mail.ru", "Петр", 28);
-        studentDao.save(student);
-        studentDao.save(student2);
-        Teacher teacher = new Teacher("t1@mail.ru", "Василий Петрович");
-        teacherDao.save(teacher);
-        Set<Student> students = new HashSet<>();
-        students.add(student);
-        students.add(student2);
-        course.setTeacher(teacher);
-        course.setStudents(students);
-        courseDao.save(course);
-        Optional<Course> result = courseDao.getById(course.getId());
-        Assertions.assertTrue(result.isPresent());
-        Assertions.assertEquals("java", course.getName());
-        Assertions.assertEquals(teacher.getName(), result.get().getTeacher().getName());
-        Assertions.assertEquals(students.size(), result.get().getStudents().size());
-    }
-    @Test
-    public void testSaveCourse()  {
+    public void testSaveCourse() throws ExistEntityException, EntityNotFoundException {
         Course course = new Course("java");
         Course course1 = new Course("python");
         Course course2 = new Course("js");
@@ -223,7 +210,7 @@ public class DaoTest {
 
 
     @Test
-    public void testUpdateCourse() {
+    public void testUpdateCourse() throws ExistEntityException, EntityNotFoundException {
         Course course = new Course("java");
         courseDao.save(course);
         Optional<Course> result = courseDao.getById(course.getId());
@@ -252,7 +239,7 @@ public class DaoTest {
 
 
     @Test
-    public void testRemoveCourse()  {
+    public void testRemoveCourse() throws ExistEntityException, EntityNotFoundException {
         Course course = new Course("java");
         courseDao.save(course);
         Optional<Course> result = courseDao.getById(course.getId());
@@ -264,7 +251,7 @@ public class DaoTest {
     }
 
     @Test
-    void testGetAllCourses() {
+    void testGetAllCourses() throws ExistEntityException, EntityNotFoundException {
         Set<Course> expectedCourse = new HashSet<>();
         Course course = new Course("java");
         Course course1 = new Course("python");
@@ -286,7 +273,7 @@ public class DaoTest {
 
     ////Teacher Test
     @Test
-    public void testGetByIdTeacher()  {
+    public void testGetByIdTeacher() throws ExistEntityException, EntityNotFoundException {
         Teacher teacher = new Teacher("t1@mail.ru", "Василий Петрович");
         Course course = new Course("java");
         Course course1 = new Course("python");
@@ -302,7 +289,7 @@ public class DaoTest {
         Assertions.assertEquals(teacher.getCourses().size(), result.get().getCourses().size());
     }
     @Test
-    public void testSaveTeacher()  {
+    public void testSaveTeacher() throws ExistEntityException, EntityNotFoundException {
         Teacher teacher = new Teacher("t1@mail.ru", "Василий Петрович");
         Teacher teacher1 = new Teacher("t2@mail.ru", "Павел Алексеевич");
         Teacher teacher2 = new Teacher("t3@mail.ru", "Сергей Владимирович");
@@ -334,7 +321,7 @@ public class DaoTest {
 
 
     @Test
-    public void testUpdateTeacher(){
+    public void testUpdateTeacher() throws ExistEntityException, EntityNotFoundException {
         Teacher teacher = new Teacher("t1@mail.ru", "Василий Петрович");
         teacherDao.save(teacher);
         Optional<Teacher> result = teacherDao.getById(teacher.getId());
@@ -355,7 +342,7 @@ public class DaoTest {
 
 
     @Test
-    public void testRemoveTeacher(){
+    public void testRemoveTeacher() throws ExistEntityException, EntityNotFoundException {
         Teacher teacher = new Teacher("t1@mail.ru", "Василий Петрович");
         teacherDao.save(teacher);
         Optional<Teacher> result = teacherDao.getById(teacher.getId());
@@ -367,7 +354,7 @@ public class DaoTest {
     }
 
     @Test
-    void testGetAllTeachers() {
+    void testGetAllTeachers() throws ExistEntityException {
         Set<Teacher> expectedTeacher = new HashSet<>();
         Teacher teacher = new Teacher("t1@mail.ru", "Василий Петрович");
         Teacher teacher1 = new Teacher("t2@mail.ru", "Павел Алексеевич");

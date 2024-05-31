@@ -1,6 +1,8 @@
 package org.example.Dao;
 
 import org.example.Dao.interfaceDao.CrudDao;
+import org.example.Exceptions.EntityNotFoundException;
+import org.example.Exceptions.ExistEntityException;
 import org.example.models.Course;
 import org.example.models.Student;
 import org.example.models.Teacher;
@@ -17,7 +19,7 @@ public class CourseDao implements CrudDao<Course> {
     private final String DB_NAME = "dbmelody";
     private Connection connection;
 
-    public CourseDao(Connection connection) {
+    public CourseDao (Connection connection){
         this.connection = connection;
         init();
     }
@@ -121,10 +123,10 @@ public class CourseDao implements CrudDao<Course> {
      * @param course - курс для сохранения
      */
     @Override
-    public void save(Course course) {
+    public void save(Course course) throws ExistEntityException, EntityNotFoundException {
         Optional<Course> existsCourseByName = getByName(course.getName());
         if (existsCourseByName.isPresent()) {
-            throw new RuntimeException("Course with name " + course.getName() + " already exists");
+            throw new ExistEntityException("Course with name " + course.getName() + " already exists");
         } else {
             try {
                 String query = "INSERT INTO courses (name_course) VALUES (?)";
@@ -154,7 +156,7 @@ public class CourseDao implements CrudDao<Course> {
                 if (existingTeacher.isPresent()) {
                     updateTeacherCourse(existingTeacher.get(), course);
                 } else {
-                    throw new RuntimeException("Teacher with name " + course.getTeacher().getName() + " not found");
+                    throw new EntityNotFoundException("Teacher with name " + course.getTeacher().getName() + " not found");
                 }
             }
 
@@ -165,10 +167,10 @@ public class CourseDao implements CrudDao<Course> {
      * @param course - курс для обновления
      */
     @Override
-    public void update(Course course) {
+    public void update(Course course) throws EntityNotFoundException {
         Optional<Course> existingCourse = getByName(course.getName());
         if (!existingCourse.isPresent()) {
-            throw new RuntimeException("Course with name " + course.getName() + " not found");
+            throw new EntityNotFoundException("Course with name " + course.getName() + " not found");
         } else {
             try {
                 String query = "UPDATE courses SET name_course = ? WHERE id = ?";
@@ -184,7 +186,7 @@ public class CourseDao implements CrudDao<Course> {
                 if (existingTeacher.isPresent()) {
                     updateTeacherCourse(existingTeacher.get(), course);
                 } else {
-                    throw new RuntimeException("Teacher with name " + course.getTeacher().getName() + " not found");
+                    throw new EntityNotFoundException("Teacher with name " + course.getTeacher().getName() + " not found");
                 }
             }
             if (course.getStudents() != null) {
@@ -193,7 +195,7 @@ public class CourseDao implements CrudDao<Course> {
                     if (existingStudent.isPresent()) {
                         checkAndUpdateStudentCourse(existingStudent.get(), course);
                     } else {
-                        throw new RuntimeException("Student with email " + student.getEmail() + " not found");
+                        throw new EntityNotFoundException("Student with email " + student.getEmail() + " not found");
                     }
                 }
             }

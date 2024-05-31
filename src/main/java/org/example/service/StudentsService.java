@@ -1,6 +1,7 @@
 package org.example.service;
-
 import org.example.Dao.StudentDao;
+import org.example.Exceptions.EntityNotFoundException;
+import org.example.Exceptions.ExistEntityException;
 import org.example.dto.StudentDto;
 import org.example.mappers.StudentMapper;
 import org.example.models.Student;
@@ -12,19 +13,11 @@ import java.util.*;
  * Класс для реализации бизнесс логики студентов.
  */
 public class StudentsService {
-    private Connection connection;
+    private DBConnector dbConnector = new DBConnector();
+    private Connection connection = dbConnector.getConnection();
+    private StudentDao studentDao = new StudentDao(connection);
 
-    private final StudentDao studentDao;
 
-    /**
-     * Создает новый экземпляр класса StudentsService.
-     *
-     * @param connection подключение к базе данных
-     */
-    public StudentsService(Connection connection) {
-        this.connection = connection;
-        studentDao = new StudentDao(connection);
-    }
     /**
      * Получает студента по его идентификатору.
      *
@@ -41,6 +34,7 @@ public class StudentsService {
         } else {
             jsonResponse.put(HttpServletResponse.SC_NOT_FOUND, null);
         }
+
         return jsonResponse;
     }
 
@@ -49,8 +43,22 @@ public class StudentsService {
      *
      * @return множество объектов студентов
      */
-    public Set<Student> getAll() {
-        return studentDao.getAll();
+    public Map<Integer, List<StudentDto>> getAll() {
+        Map<Integer, List<StudentDto>> jsonResponse = new HashMap<>();
+        StudentDto studentDto = new StudentDto();
+        Set<Student> studentList = studentDao.getAll();
+        List<StudentDto> studentDtoList = new ArrayList<>();
+        for (Student student : studentList) {
+            studentDto = StudentMapper.mapStudent.toDto(student);
+            studentDtoList.add(studentDto);
+        }
+        if (!studentList.isEmpty()) {
+            jsonResponse.put(HttpServletResponse.SC_FOUND, studentDtoList);
+        } else {
+            jsonResponse.put(HttpServletResponse.SC_NOT_FOUND, null);
+        }
+
+        return jsonResponse;
     }
 
     /**
@@ -60,10 +68,16 @@ public class StudentsService {
      * @return Map JSON-ответа с данными добавленного студента
      * @throws IOException если возникла ошибка при сохранении студента
      */
-    public Map<Integer, StudentDto> addStudent(StudentDto studentDto) throws IOException {
+    public Map<Integer, StudentDto> addStudent(StudentDto studentDto) {
         Map<Integer, StudentDto> jsonResponse = new HashMap<>();
         Student student = StudentMapper.mapStudent.fromDto(studentDto);
-        studentDao.save(student);
+        try {
+            studentDao.save(student);
+        } catch (ExistEntityException e) {
+            throw new RuntimeException(e);
+        } catch (EntityNotFoundException e) {
+            throw new RuntimeException(e);
+        }
         studentDto = StudentMapper.mapStudent.toDto(student);
         jsonResponse.put(HttpServletResponse.SC_CREATED, studentDto);
         return jsonResponse;
@@ -77,7 +91,11 @@ public class StudentsService {
     public Map<Integer, StudentDto> updateStudent(StudentDto studentDto) {
         Map<Integer, StudentDto> jsonResponse = new HashMap<>();
         Student student = StudentMapper.mapStudent.fromDto(studentDto);
-        studentDao.update(student);
+        try {
+            studentDao.update(student);
+        } catch (EntityNotFoundException e) {
+            throw new RuntimeException(e);
+        }
         studentDto = StudentMapper.mapStudent.toDto(student);
         jsonResponse.put(HttpServletResponse.SC_OK, studentDto);
         return jsonResponse;
@@ -92,7 +110,11 @@ public class StudentsService {
         String jsonResponse = "";
         Optional<Student> student = studentDao.getById(id);
         if (student.get().getId() != null) {
-            studentDao.remove(student.get());
+            try {
+                studentDao.remove(student.get());
+            } catch (EntityNotFoundException e) {
+                throw new RuntimeException(e);
+            }
             jsonResponse = "Student " + id + " removed";
         } else {
             jsonResponse = "Student " + id + " not found";
