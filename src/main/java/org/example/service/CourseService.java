@@ -87,7 +87,7 @@ public class CourseService {
     }
 
     public String removeCourse(Long id) {
-        String jsonResponse = "";
+        String jsonResponse;
         Optional<Course> course = courseDao.getById(id);
         if (course.get().getId() != null) {
             try {

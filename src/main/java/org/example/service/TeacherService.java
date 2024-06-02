@@ -89,7 +89,7 @@ public class TeacherService {
     }
 
     public String removeTeacher(Long id) {
-        String jsonResponse = "";
+        String jsonResponse;
         Optional<Teacher> teacher = teacherDao.getById(id);
         if (teacher.get().getId() != null) {
             try {

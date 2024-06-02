@@ -37,7 +37,7 @@ public class StudentServiceTest {
     private StudentsService studentsService;
 
     @BeforeEach
-    void setUpBeforeEach() throws SQLException, ClassNotFoundException {
+    void setUpBeforeEach() throws SQLException {
         MockitoAnnotations.openMocks(this);
         when(dbConnector.getConnection()).thenReturn(connection);
         doNothing().when(connection).commit();
@@ -123,7 +123,7 @@ public class StudentServiceTest {
     }
 
     @Test
-    void testRemoveStudent() throws IOException {
+    void testRemoveStudent() {
 
         Student student = new Student("1@mail.ru", "Василий", 30);
         student.setId(1L);
@@ -136,7 +136,7 @@ public class StudentServiceTest {
     }
 
     @Test
-    void testRemoveStudent_Not_Found() throws IOException {
+    void testRemoveStudent_Not_Found() {
 
         Student student = new Student("1@mail.ru", "Василий", 30);
 

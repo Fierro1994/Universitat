@@ -1,12 +1,5 @@
 package org.example.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import org.example.models.Student;
-import org.example.models.Teacher;
-
-import java.util.HashSet;
-import java.util.Set;
-
 public class CourseDto {
     private Long id;
     private String name;

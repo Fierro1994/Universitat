@@ -113,7 +113,7 @@ public class CourseServiceTest {
     }
 
     @Test
-    void testRemoveCourse() throws IOException {
+    void testRemoveCourse()  {
 
         Course course = new Course("java");
         course.setId(1L);
@@ -126,7 +126,7 @@ public class CourseServiceTest {
     }
 
     @Test
-    void testRemoveCourse_Not_Found() throws IOException {
+    void testRemoveCourse_Not_Found() {
 
         Course course = new Course("java");
 

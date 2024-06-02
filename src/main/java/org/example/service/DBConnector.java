@@ -1,12 +1,8 @@
 package org.example.service;
 
-import com.zaxxer.hikari.HikariConfig;
-import com.zaxxer.hikari.HikariDataSource;
-import com.zaxxer.hikari.hibernate.HikariConfigurationUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.sql.DataSource;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
@@ -20,7 +16,8 @@ public class DBConnector {
     private final String url;
     private final String username;
     private final String password;
-    public DBConnector(){
+
+    public DBConnector() {
         this.driver = getParematersFromFile().getProperty("db.driver");
         this.url = getParematersFromFile().getProperty("db.url");
         this.username = getParematersFromFile().getProperty("db.username");
@@ -31,7 +28,7 @@ public class DBConnector {
         this.driver = driver;
         this.url = url;
         this.username = username;
-        this.password =  password;
+        this.password = password;
     }
 
     public Connection getConnection() {
@@ -39,23 +36,23 @@ public class DBConnector {
         try {
             Class.forName(driver);
         } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
+            logger.error(e.getMessage());
         }
         Connection connection = null;
         try {
             connection = DriverManager.getConnection(url, username, password);
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            logger.error(e.getMessage());
         }
         try {
             connection.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            logger.error(e.getMessage());
         }
         return connection;
     }
 
-    private Properties getParematersFromFile(){
+    private Properties getParematersFromFile() {
         Properties properties = new Properties();
         InputStream inputStream = DBConnector.class.getClassLoader().getResourceAsStream("application.properties");
         try {

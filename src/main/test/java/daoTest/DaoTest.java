@@ -29,7 +29,7 @@ class DaoTest {
     private static CreateDBAndDTO createDBAndDTO;
 
     @BeforeAll
-    static void setUp() throws SQLException {
+    static void setUp() {
         MY_SQL_CONTAINER.start();
         String driver = MY_SQL_CONTAINER.getDriverClassName();
         String dburl = MY_SQL_CONTAINER.getJdbcUrl();

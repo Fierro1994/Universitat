@@ -124,8 +124,7 @@ public class CourseDao implements CrudDao<Course> {
             throw new ExistEntityException("Course with name " + course.getName() + " already exists");
         } else {
             try (Connection connection = dbConnector.getConnection();
-                 PreparedStatement statement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
-            ) {
+                 PreparedStatement statement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
                 statement.setString(1, course.getName());
                 statement.executeUpdate();
                 ResultSet resultSet = statement.getGeneratedKeys();
@@ -251,7 +250,7 @@ public class CourseDao implements CrudDao<Course> {
     private void updateStudentCourse(Student student, Course course) {
         String query = "UPDATE students_and_courses SET student_id = ?, course_id = ? WHERE student_id = ? AND course_id = ?";
         try (Connection connection = dbConnector.getConnection();
-             PreparedStatement statement = connection.prepareStatement(query);
+             PreparedStatement statement = connection.prepareStatement(query)
         ) {
             statement.setLong(1, student.getId());
             statement.setLong(2, course.getId());

@@ -83,7 +83,7 @@ public class StudentsService {
     }
 
     public String removeStudent(Long id) {
-        String jsonResponse = "";
+        String jsonResponse;
         Optional<Student> student = studentDao.getById(id);
         if (student.get().getId() != null) {
             try {
