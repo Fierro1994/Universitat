@@ -14,7 +14,6 @@ import org.junit.jupiter.api.*;
 import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
-import java.sql.*;
 import java.util.*;
 
 @Testcontainers
@@ -35,7 +34,8 @@ class DaoTest {
         String dburl = MY_SQL_CONTAINER.getJdbcUrl();
         String username = MY_SQL_CONTAINER.getUsername();
         String password =  MY_SQL_CONTAINER.getPassword();
-        DBConnector dbConnector = new DBConnector(driver, dburl, username, password);
+        Integer msxPoolSize = 3;
+        DBConnector dbConnector = new DBConnector(driver, dburl, username, password, msxPoolSize);
         studentDao = new StudentDao(dbConnector);
         courseDao = new CourseDao(dbConnector);
         teacherDao = new TeacherDao(dbConnector);
