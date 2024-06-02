@@ -14,12 +14,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-/**
- * Контроллер курсов.
- * Этот класс обрабатывает HTTP-запросы для работы с курсами.
- * Он использует сервис CourseService для выполнения бизнес-логики.
- */
-
 @WebServlet(name = "CourseController",
         loadOnStartup = 1,
         urlPatterns = {
@@ -30,20 +24,26 @@ import javax.servlet.http.HttpServletResponse;
                 "/getAllCourses"
         })
 public class CourseController extends HttpServlet {
-    private CourseService courseService = new CourseService();
+    private static final String JSON_CONTENT_TYPE = "application/json; charset=UTF-8";
+    private static final String ENCODING_UTF_8 = "UTF-8";
 
-    /**
-     * Обработчик GET-запроса.
-     * @param request объект запроса
-     * @param response объект ответа
-     * @throws IOException исключение ввода-вывода
-     */
+    private final CourseService courseService;
+
+    public CourseController() {
+        this.courseService = new CourseService();
+    }
+
+    public CourseController(CourseService courseService) {
+        this.courseService = courseService;
+    }
+
+
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
-        request.setCharacterEncoding("UTF-8");
-        response.setContentType("application/json; charset=UTF-8");
-        response.setCharacterEncoding("UTF-8");
+        request.setCharacterEncoding(ENCODING_UTF_8);
+        response.setCharacterEncoding(ENCODING_UTF_8);
+        response.setContentType(JSON_CONTENT_TYPE);
         PrintWriter out = response.getWriter();
         String pathParam = request.getServletPath();
         Long id = Long.parseLong(request.getParameter("id"));
@@ -66,25 +66,21 @@ public class CourseController extends HttpServlet {
                 out.flush();
                 out.close();
                 break;
+            default:
+                break;
         }
     }
 
-    /**
-     * Обработчик POST-запроса.
-     * @param request объект запроса
-     * @param response объект ответа
-     * @throws IOException исключение ввода-вывода
-     */
+
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
-        request.setCharacterEncoding("UTF-8");
-        response.setContentType("application/json; charset=UTF-8");
-        response.setCharacterEncoding("UTF-8");
+        request.setCharacterEncoding(ENCODING_UTF_8);
+        response.setCharacterEncoding(ENCODING_UTF_8);
+        response.setContentType(JSON_CONTENT_TYPE);
         String pathParam = request.getServletPath();
         PrintWriter out = response.getWriter();
         BufferedReader reader = request.getReader();
-        request.setCharacterEncoding("UTF-8");
         String json = reader.lines().collect(Collectors.joining(System.lineSeparator()));
         ObjectMapper objectMapper = new ObjectMapper();
         CourseDto courseDto = objectMapper.readValue(json, CourseDto.class);
@@ -95,51 +91,43 @@ public class CourseController extends HttpServlet {
                 response.setStatus(responseMap.entrySet().stream().findFirst().get().getKey());
                 courseDto = responseMap.entrySet().stream().findFirst().get().getValue();
                 break;
+            default:
+                break;
         }
         out.println(courseDto.toString());
         out.flush();
         out.close();
     }
-    /**
-     * Обработчик PUT-запроса.
-     * @param request объект запроса
-     * @param response объект ответа
-     * @throws IOException исключение ввода-вывода
-     */
+
+    @Override
     public void doPut(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        request.setCharacterEncoding("UTF-8");
-        response.setContentType("application/json; charset=UTF-8");
-        response.setCharacterEncoding("UTF-8");
+        request.setCharacterEncoding(ENCODING_UTF_8);
+        response.setCharacterEncoding(ENCODING_UTF_8);
+        response.setContentType(JSON_CONTENT_TYPE);
         String pathParam = request.getServletPath();
         PrintWriter out = response.getWriter();
         BufferedReader reader = request.getReader();
-        request.setCharacterEncoding("UTF-8");
         String json = reader.lines().collect(Collectors.joining(System.lineSeparator()));
         ObjectMapper objectMapper = new ObjectMapper();
         CourseDto courseDto = objectMapper.readValue(json, CourseDto.class);
-        response.setContentType("application/json; charset=UTF-8");
-        response.setCharacterEncoding("UTF-8");
         switch (pathParam) {
             case "/updateCourse":
                 Map<Integer, CourseDto> responseMap = courseService.updateCourse(courseDto);
                 response.setStatus(responseMap.entrySet().stream().findFirst().get().getKey());
                 courseDto = responseMap.entrySet().stream().findFirst().get().getValue();
                 break;
+            default:
+                break;
         }
         out.println(courseDto);
         out.flush();
         out.close();
     }
-    /**
-     * Обработчик DELETE-запроса.
-     * @param request объект запроса
-     * @param response объект ответа
-     * @throws IOException исключение ввода-вывода
-     */
+    @Override
     public void doDelete(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        request.setCharacterEncoding("UTF-8");
-        response.setContentType("application/json; charset=UTF-8");
-        response.setCharacterEncoding("UTF-8");
+        request.setCharacterEncoding(ENCODING_UTF_8);
+        response.setCharacterEncoding(ENCODING_UTF_8);
+        response.setContentType(JSON_CONTENT_TYPE);
         PrintWriter out = response.getWriter();
         String pathParam = request.getServletPath();
         String jsonResponse = "";
@@ -147,6 +135,8 @@ public class CourseController extends HttpServlet {
         switch (pathParam) {
             case "/removeCourse":
                 jsonResponse = courseService.removeCourse(id);
+                break;
+            default:
                 break;
         }
         out.print(jsonResponse);

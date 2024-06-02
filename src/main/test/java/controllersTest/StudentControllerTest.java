@@ -14,9 +14,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.util.*;
+
 import static org.mockito.Mockito.*;
 
-public class StudentControllerTest {
+class StudentControllerTest {
 
     @Mock
     private StudentsService studentsService;
@@ -83,7 +84,7 @@ public class StudentControllerTest {
     void testDoPost_AddStudent() throws IOException {
         StudentDto studentDto = new StudentDto("2@mail.ru", "Василий", 30);
         StringWriter stringWriter = new StringWriter();
-        PrintWriter printWriter = new PrintWriter(stringWriter);
+        printWriter = new PrintWriter(stringWriter);
         ObjectMapper objectMapper = new ObjectMapper();
 
         Map<Integer, StudentDto> responseMap = new HashMap<>();
@@ -106,7 +107,7 @@ public class StudentControllerTest {
 
 
         StringWriter stringWriter = new StringWriter();
-        PrintWriter printWriter = new PrintWriter(stringWriter);
+        printWriter = new PrintWriter(stringWriter);
         ObjectMapper objectMapper = new ObjectMapper();
 
         Map<Integer, StudentDto> responseMap = new HashMap<>();
@@ -124,7 +125,7 @@ public class StudentControllerTest {
 
     @Test
     void testDoRemove_RemoveStudent() throws IOException {
-        PrintWriter printWriter = mock(PrintWriter.class);
+        printWriter = mock(PrintWriter.class);
 
         when(request.getServletPath()).thenReturn("/removeStudent");
         when(request.getParameter("id")).thenReturn("1");

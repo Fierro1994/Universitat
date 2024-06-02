@@ -1,12 +1,12 @@
-package org.example.Dao.interfaceDao;
+package org.example.dao.interfaceDao;
 
-import org.example.Exceptions.EntityNotFoundException;
-import org.example.Exceptions.ExistEntityException;
-
+import org.example.exceptions.EntityNotFoundException;
+import org.example.exceptions.ExistEntityException;
 import java.util.Optional;
 import java.util.Set;
 
 public interface CrudDao<T> {
+
     Optional<T> getById(Long id);
 
     Set<T> getAll();

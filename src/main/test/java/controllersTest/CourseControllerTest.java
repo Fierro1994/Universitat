@@ -20,7 +20,7 @@ import java.util.Map;
 
 import static org.mockito.Mockito.*;
 
-public class CourseControllerTest {
+class CourseControllerTest {
 
     @Mock
     private CourseService courseService;
@@ -34,14 +34,14 @@ public class CourseControllerTest {
     @InjectMocks
     private CourseController courseController;
 
-
     @BeforeEach
     void setUpBeforeEach() {
         MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    public void testGetControllerCourse() throws IOException {
+    void testGetControllerCourse() throws IOException {
+
         Map<Integer, CourseDto> responseMap = new HashMap<>();
         CourseDto courseDto = new CourseDto("java");
         courseDto.setId(1L);
@@ -86,7 +86,7 @@ public class CourseControllerTest {
     void testDoPost_AddCourse() throws IOException {
         CourseDto courseDto = new CourseDto("java");
         StringWriter stringWriter = new StringWriter();
-        PrintWriter printWriter = new PrintWriter(stringWriter);
+        printWriter = new PrintWriter(stringWriter);
         ObjectMapper objectMapper = new ObjectMapper();
 
         Map<Integer, CourseDto> responseMap = new HashMap<>();
@@ -107,7 +107,7 @@ public class CourseControllerTest {
         CourseDto courseDto = new CourseDto("java");
         courseDto.setId(1L);
         StringWriter stringWriter = new StringWriter();
-        PrintWriter printWriter = new PrintWriter(stringWriter);
+        printWriter = new PrintWriter(stringWriter);
         ObjectMapper objectMapper = new ObjectMapper();
 
         Map<Integer, CourseDto> responseMap = new HashMap<>();
@@ -125,7 +125,7 @@ public class CourseControllerTest {
 
     @Test
     void testDoRemove_RemoveCourse() throws IOException {
-        PrintWriter printWriter = mock(PrintWriter.class);
+        printWriter = mock(PrintWriter.class);
 
         when(request.getServletPath()).thenReturn("/removeCourse");
         when(request.getParameter("id")).thenReturn("1");

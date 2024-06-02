@@ -1,81 +1,84 @@
 package org.example.service;
 
+import org.example.dao.CourseDao;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-/**
- * Класс для создания и удаления базы данных.
- */
 public class CreateDBAndDTO {
-
+    private static final Logger logger = LoggerFactory.getLogger(CourseDao.class);
     private static final String SQL_CREATE_DB = "CREATE DATABASE dbmelody CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;;";
     private static final String SQL_DROP_DB = "DROP DATABASE dbmelody;";
-    private Connection connection;
-    public CreateDBAndDTO(Connection connection){
-        this.connection =  connection;
+
+    private final DBConnector dbConnector;
+
+    public CreateDBAndDTO() {
+        dbConnector = new DBConnector();
     }
 
-    /**
-     * Создает базу данных.
-     *
-     * Если база данных уже существует, она удаляется перед созданием.
-     */
-    public void createDataBase() {
-        Statement statement;
-        try {
-            statement = connection.createStatement();
-            statement.execute(SQL_DROP_DB);
+    public CreateDBAndDTO(DBConnector dbConnector) {
+        this.dbConnector = dbConnector;
+    }
 
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
+
+    public void createDataBase() {
+
 
         String initSQL = "USE dbmelody;";
-        String SQLStusent =
-                "CREATE TABLE students (\n" +
-                        "    id INT AUTO_INCREMENT PRIMARY KEY,\n" +
-                        "    email VARCHAR(255) UNIQUE,\n" +
-                        "    name_student VARCHAR(255),\n" +
-                        "    age INT\n" +
-                        ");";
-        String SQLTeacher =
-                "CREATE TABLE teachers (\n" +
-                        "    id INT AUTO_INCREMENT PRIMARY KEY,\n" +
-                        "    email VARCHAR(255) UNIQUE,\n" +
-                        "    name_teacher VARCHAR(255)\n" +
-                        ");";
-        String SQLCourses =
-                "CREATE TABLE courses (\n" +
-                        "    id INT AUTO_INCREMENT PRIMARY KEY,\n" +
-                        "    name_course VARCHAR(255) UNIQUE,\n" +
-                        "    teacher_id INT,\n" +
-                        "    FOREIGN KEY (teacher_id) REFERENCES teachers(id)\n" +
-                        ");";
+        String sqlStusent = """
+                CREATE TABLE students (
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    email VARCHAR(255) UNIQUE,
+                    name_student VARCHAR(255),
+                    age INT
+                );
+                """;
+        String sqlTeacher = """
+                CREATE TABLE teachers (
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    email VARCHAR(255) UNIQUE,
+                    name_teacher VARCHAR(255)
+                );
+                """;
+        String sqlCourses = """
+                CREATE TABLE courses (
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    name_course VARCHAR(255) UNIQUE,
+                    teacher_id INT,
+                    FOREIGN KEY (teacher_id) REFERENCES teachers(id)
+                );
+                """;
 
-        String SQLStudentsCourses =
-                "CREATE TABLE students_and_courses (\n" +
-                        "    student_id INT,\n" +
-                        "    course_id INT,\n" +
-                        "    PRIMARY KEY (student_id, course_id),\n" +
-                        "    FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE CASCADE,\n" +
-                        "    FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE\n" +
-                        ");";
+        String sqlStudentsCourses = """
+                CREATE TABLE students_and_courses (
+                    student_id INT,
+                    course_id INT,
+                    PRIMARY KEY (student_id, course_id),
+                    FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE CASCADE,
+                    FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE
+                );
+                """;
+        String sqlOneToManyTeacherCourses = "ALTER TABLE dbmelody.courses ADD FOREIGN KEY (teacher_id) REFERENCES dbmelody.teachers(id) ON DELETE SET NULL";
 
-        String SQLOneToManyTeacherCourses = "ALTER TABLE dbmelody.courses ADD FOREIGN KEY (teacher_id) REFERENCES dbmelody.teachers(id) ON DELETE SET NULL";
-
-
-        try {
-            statement = connection.createStatement();
+        try (Connection connection = dbConnector.getConnection();
+             Statement statement = connection.createStatement()) {
+            statement.execute(SQL_DROP_DB);
             statement.execute(SQL_CREATE_DB);
             statement.execute(initSQL);
-            statement.execute(SQLStusent);
-            statement.execute(SQLTeacher);
-            statement.execute(SQLCourses);
-            statement.execute(SQLStudentsCourses);
-            statement.execute(SQLOneToManyTeacherCourses);
+            statement.execute(sqlStusent);
+            statement.execute(sqlTeacher);
+            statement.execute(sqlCourses);
+            statement.execute(sqlStudentsCourses);
+            statement.execute(sqlOneToManyTeacherCourses);
+
+            logger.info("База данных успешно создана");
+
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            logger.error(ex.getMessage(), ex);
         }
     }
 }

@@ -1,7 +1,8 @@
 package serviceTest;
 
-import org.example.Dao.TeacherDao;
-import org.example.Exceptions.ExistEntityException;
+import org.example.exceptions.EntityNotFoundException;
+import org.example.dao.TeacherDao;
+import org.example.exceptions.ExistEntityException;
 import org.example.dto.TeacherDto;
 import org.example.mappers.TeacherMapper;
 import org.example.models.Teacher;
@@ -12,7 +13,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -42,9 +42,10 @@ public class TeacherServiceTest {
         assertEquals(1, result.size());
         assertEquals(HttpServletResponse.SC_FOUND, result.keySet().iterator().next());
     }
+
     @Test
     void testGetTeacher_NotFound() {
-        Optional<Teacher> optionalTeacher =Optional.empty();
+        Optional<Teacher> optionalTeacher = Optional.empty();
 
         when(teacherDao.getById(1L)).thenReturn(optionalTeacher);
 
@@ -83,7 +84,7 @@ public class TeacherServiceTest {
     }
 
     @Test
-    void testAddTeacher() throws ExistEntityException {
+    void testAddTeacher() throws ExistEntityException, EntityNotFoundException {
         TeacherDto teacherDto = new TeacherDto("t1@mail.ru", "Василий Петрович");
         teacherDto.setId(1L);
         Teacher teacher = TeacherMapper.mapTeacher.fromDto(teacherDto);
@@ -97,7 +98,7 @@ public class TeacherServiceTest {
     }
 
     @Test
-    void testUpdateTeacher() throws ExistEntityException {
+    void testUpdateTeacher() throws ExistEntityException, EntityNotFoundException {
         TeacherDto teacherDto = new TeacherDto("t1@mail.ru", "Василий Петрович");
         Teacher teacher = TeacherMapper.mapTeacher.fromDto(teacherDto);
 

@@ -1,4 +1,5 @@
 package controllersTest;
+
 import org.example.controllers.TeachersController;
 import org.example.dto.TeacherDto;
 import org.example.service.TeacherService;
@@ -19,7 +20,7 @@ import java.util.Map;
 
 import static org.mockito.Mockito.*;
 
-public class TeacherControllerTest {
+class TeacherControllerTest {
 
     @Mock
     private TeacherService teacherService;
@@ -40,7 +41,7 @@ public class TeacherControllerTest {
     }
 
     @Test
-    public void testGetControllerTeacher() throws IOException {
+    void testGetControllerTeacher() throws IOException {
         Map<Integer, TeacherDto> responseMap = new HashMap<>();
         TeacherDto teacherDto = new TeacherDto("t2@mail.ru", "Василий Петрович");
         teacherDto.setId(1L);
@@ -85,7 +86,7 @@ public class TeacherControllerTest {
     void testDoPost_AddCourse() throws IOException {
         TeacherDto teacherDto = new TeacherDto("t1@mail.ru", "Василий Петрович");
         StringWriter stringWriter = new StringWriter();
-        PrintWriter printWriter = new PrintWriter(stringWriter);
+        printWriter = new PrintWriter(stringWriter);
         ObjectMapper objectMapper = new ObjectMapper();
 
         Map<Integer, TeacherDto> responseMap = new HashMap<>();
@@ -106,7 +107,7 @@ public class TeacherControllerTest {
         TeacherDto teacherDto = new TeacherDto("t1@mail.ru", "Василий Петрович");
         teacherDto.setId(1L);
         StringWriter stringWriter = new StringWriter();
-        PrintWriter printWriter = new PrintWriter(stringWriter);
+        printWriter = new PrintWriter(stringWriter);
         ObjectMapper objectMapper = new ObjectMapper();
 
         Map<Integer, TeacherDto> responseMap = new HashMap<>();
@@ -124,7 +125,7 @@ public class TeacherControllerTest {
 
     @Test
     void testDoRemove_RemoveCourse() throws IOException {
-        PrintWriter printWriter = mock(PrintWriter.class);
+        printWriter = mock(PrintWriter.class);
 
         when(request.getServletPath()).thenReturn("/removeTeacher");
         when(request.getParameter("id")).thenReturn("1");

@@ -1,20 +1,10 @@
 package org.example.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import org.example.models.Course;
-
-import java.util.HashSet;
-import java.util.Set;
-
-public class StudentDto    {
+public class StudentDto {
     private Long id;
     private String email;
     private String name;
     private int age;
-    @JsonProperty("сourses")
-    @JsonIgnore
-    private Set<Course> courses;
 
     public StudentDto() {
     }
@@ -57,24 +47,13 @@ public class StudentDto    {
         this.age = age;
     }
 
-    public Set<Course> getCourses() {
-        return courses;
-    }
-
-    public void setCourses(Set<Course> courses) {
-        this.courses = courses;
-    }
-
     @Override
     public String toString() {
-        Set<String> coursesNameList = new HashSet<>();
-        if (courses != null){
-            courses.forEach(e-> coursesNameList.add((e.getName())));
-        }
-        return "Student{" +
+        return "StudentDto{" +
                 "id=" + id +
+                ", email='" + email + '\'' +
                 ", name='" + name + '\'' +
                 ", age=" + age +
-                ", courses=" + coursesNameList + "}";
+                '}';
     }
 }

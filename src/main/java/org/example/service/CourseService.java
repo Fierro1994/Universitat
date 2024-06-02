@@ -1,30 +1,29 @@
 package org.example.service;
 
-import org.example.Dao.CourseDao;
-import org.example.Exceptions.EntityNotFoundException;
-import org.example.Exceptions.ExistEntityException;
+import org.example.dao.CourseDao;
+import org.example.exceptions.EntityNotFoundException;
+import org.example.exceptions.ExistEntityException;
 import org.example.dto.CourseDto;
 import org.example.mappers.CourseMapper;
 import org.example.models.Course;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.sql.Connection;
 import java.util.*;
 
-/**
- * Класс для реализации бизнесс логики курсов.
- */
 public class CourseService {
-    private DBConnector dbConnector = new DBConnector();
-    private Connection connection = dbConnector.getConnection();
-    private CourseDao courseDao = new CourseDao(connection);
+    private static final Logger logger = LoggerFactory.getLogger(CourseService.class);
+    private final CourseDao courseDao;
 
-    /**
-     * Получает курс по его идентификатору.
-     *
-     * @param id идентификатор курса
-     * @return набор с информацией о курсе и его статусом (SC_FOUND или SC_NOT_FOUND)
-     */
+    public CourseService() {
+        this.courseDao = new CourseDao();
+    }
+
+    public CourseService(CourseDao courseDao) {
+        this.courseDao = courseDao;
+    }
+
     public Map<Integer, CourseDto> getCourse(Long id) {
         Map<Integer, CourseDto> jsonResponse = new HashMap<>();
         CourseDto courseDto;
@@ -38,11 +37,6 @@ public class CourseService {
         return jsonResponse;
     }
 
-    /**
-     * Получает все курсы.
-     *
-     * @return набор курсов
-     */
     public Map<Integer, List<CourseDto>> getAll() {
         Map<Integer, List<CourseDto>> jsonResponse = new HashMap<>();
         CourseDto courseDto;
@@ -60,22 +54,14 @@ public class CourseService {
 
         return jsonResponse;
     }
-    /**
-     * Добавляет новый курс.
-     *
-     * @param courseDto объект CourseDto с информацией о курсе
-     * @return Map с информацией о добавленном курсе и его статусом (SC_CREATED или SC_CONFLICT)
-     * @throws IOException если возникла ошибка при работе с базой данных
-     */
+
     public Map<Integer, CourseDto> addCourse(CourseDto courseDto) {
         Map<Integer, CourseDto> jsonResponse = new HashMap<>();
         Course course = CourseMapper.mapCourse.fromDto(courseDto);
         try {
             courseDao.save(course);
-        } catch (ExistEntityException e) {
-            throw new RuntimeException(e);
-        } catch (EntityNotFoundException e) {
-            throw new RuntimeException(e);
+        } catch (ExistEntityException | EntityNotFoundException e) {
+            logger.error(e.getMessage(), e);
         }
         if (course.getId() != null) {
             courseDto.setId(course.getId());
@@ -86,40 +72,33 @@ public class CourseService {
             return jsonResponse;
         }
     }
-    /**
-     * Обновляет информацию о курсе.
-     *
-     * @param courseDto объект CourseDto с информацией о курсе
-     * @return Map с информацией об обновленном курсе и его статусом (SC_OK)
-     */
-    public Map<Integer, CourseDto> updateCourse(CourseDto courseDto)  {
+
+    public Map<Integer, CourseDto> updateCourse(CourseDto courseDto) {
         Map<Integer, CourseDto> jsonResponse = new HashMap<>();
         Course course = CourseMapper.mapCourse.fromDto(courseDto);
         try {
             courseDao.update(course);
         } catch (EntityNotFoundException e) {
-            throw new RuntimeException(e);
+            logger.error(e.getMessage(), e);
         }
         courseDto = CourseMapper.mapCourse.toDto(course);
         jsonResponse.put(HttpServletResponse.SC_OK, courseDto);
         return jsonResponse;
     }
-    /**
-     * Удаляет курс по его идентификатору.
-     *
-     * @param id идентификатор курса
-     * @return JSON-ответ с информацией о результате удаления курса (успешное удаление или сообщение о том, что курс не найден)
-     */
+
     public String removeCourse(Long id) {
         String jsonResponse = "";
         Optional<Course> course = courseDao.getById(id);
         if (course.get().getId() != null) {
-            courseDao.remove(course.get());
+            try {
+                courseDao.remove(course.get());
+            } catch (EntityNotFoundException e) {
+                logger.error(e.getMessage(), e);
+            }
             jsonResponse = "Course " + id + " removed";
         } else {
             jsonResponse = "Course " + id + " not found";
         }
         return jsonResponse;
     }
-
 }

@@ -1,8 +1,8 @@
 package serviceTest;
 
-import org.example.Dao.CourseDao;
-import org.example.Exceptions.EntityNotFoundException;
-import org.example.Exceptions.ExistEntityException;
+import org.example.dao.CourseDao;
+import org.example.exceptions.EntityNotFoundException;
+import org.example.exceptions.ExistEntityException;
 import org.example.dto.CourseDto;
 import org.example.mappers.CourseMapper;
 import org.example.models.Course;
@@ -23,17 +23,17 @@ import static org.mockito.Mockito.*;
 public class CourseServiceTest {
     @Mock
     private CourseDao courseDao;
-
     @InjectMocks
     private CourseService courseService;
 
+
     @BeforeEach
-    void setUpBeforeEach() {
+    public void setUpBeforeEach() {
         MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    void testGetCourse() {
+    public void testGetCourse() {
         Course course = new Course("java");
         Optional<Course> optionalCourse = Optional.of(course);
 

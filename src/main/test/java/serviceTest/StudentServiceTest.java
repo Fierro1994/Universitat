@@ -1,19 +1,23 @@
 package serviceTest;
 
-import org.example.Dao.StudentDao;
-import org.example.Exceptions.EntityNotFoundException;
-import org.example.Exceptions.ExistEntityException;
+import org.example.dao.StudentDao;
+import org.example.exceptions.EntityNotFoundException;
+import org.example.exceptions.ExistEntityException;
 import org.example.dto.StudentDto;
 import org.example.models.Student;
 import org.example.mappers.StudentMapper;
+import org.example.service.DBConnector;
 import org.example.service.StudentsService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -23,12 +27,20 @@ public class StudentServiceTest {
     @Mock
     private StudentDao studentDao;
 
+    @Mock
+    private Connection connection;
+
+    @Mock
+    private DBConnector dbConnector;
+
     @InjectMocks
     private StudentsService studentsService;
 
     @BeforeEach
-    void setUpBeforeEach() {
+    void setUpBeforeEach() throws SQLException, ClassNotFoundException {
         MockitoAnnotations.openMocks(this);
+        when(dbConnector.getConnection()).thenReturn(connection);
+        doNothing().when(connection).commit();
     }
 
     @Test
@@ -43,9 +55,10 @@ public class StudentServiceTest {
         assertEquals(1, result.size());
         assertEquals(HttpServletResponse.SC_FOUND, result.keySet().iterator().next());
     }
+
     @Test
     void testGetStudent_NotFound() {
-        Optional<Student> optionalStudent =Optional.empty();
+        Optional<Student> optionalStudent = Optional.empty();
 
         when(studentDao.getById(1L)).thenReturn(optionalStudent);
 

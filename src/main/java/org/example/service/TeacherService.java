@@ -1,29 +1,30 @@
 package org.example.service;
 
-import org.example.Dao.TeacherDao;
-import org.example.Exceptions.EntityNotFoundException;
-import org.example.Exceptions.ExistEntityException;
+import org.example.dao.TeacherDao;
+import org.example.exceptions.EntityNotFoundException;
+import org.example.exceptions.ExistEntityException;
 import org.example.dto.TeacherDto;
 import org.example.mappers.TeacherMapper;
 import org.example.models.Teacher;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.sql.Connection;
 import java.util.*;
 
-/**
- * Класс для реализации бизнесс логики преподавателей.
- */
-public class TeacherService {
-    private DBConnector dbConnector = new DBConnector();
-    private Connection connection = dbConnector.getConnection();
-    private TeacherDao teacherDao = new TeacherDao(connection);
 
-    /**
-     * Метод для получения информации о преподавателе по его идентификатору.
-     * @param id - идентификатор преподавателя
-     * @return - Map, содержащая статус HTTP и объект DTO преподавателя, если он найден, или null, если преподаватель не найден
-     */
+public class TeacherService {
+    private static final Logger logger = LoggerFactory.getLogger(TeacherService.class);
+    private final TeacherDao teacherDao;
+
+    public TeacherService() {
+        this.teacherDao = new TeacherDao();
+    }
+
+    public TeacherService(TeacherDao teacherDao) {
+        this.teacherDao = teacherDao;
+    }
+
     public Map<Integer, TeacherDto> getTeacher(Long id) {
         Map<Integer, TeacherDto> jsonResponse = new HashMap<>();
         TeacherDto teacherDto;
@@ -37,10 +38,6 @@ public class TeacherService {
         return jsonResponse;
     }
 
-    /**
-     * Метод для получения всех преподавателей из базы данных.
-     * @return - Set объектов преподавателей
-     */
     public Map<Integer, List<TeacherDto>> getAll() {
         Map<Integer, List<TeacherDto>> jsonResponse = new HashMap<>();
         TeacherDto teacherDto;
@@ -59,19 +56,13 @@ public class TeacherService {
         return jsonResponse;
     }
 
-    /**
-     * Метод для добавления нового преподавателя в базу данных.
-     * @param teacherDto - объект DTO преподавателя, который нужно добавить
-     * @return - Map, содержащая статус HTTP и объект DTO преподавателя, если преподаватель успешно добавлен, или null, если добавление преподавателя не удалось
-     * @throws IOException - если при добавлении преподавателя возникает исключение
-     */
     public Map<Integer, TeacherDto> addTeacher(TeacherDto teacherDto) {
         Map<Integer, TeacherDto> jsonResponse = new HashMap<>();
         Teacher teacher = TeacherMapper.mapTeacher.fromDto(teacherDto);
         try {
             teacherDao.save(teacher);
-        } catch (ExistEntityException e) {
-            throw new RuntimeException(e);
+        } catch (ExistEntityException | EntityNotFoundException e) {
+            logger.error(e.getMessage(), e);
         }
 
         if (teacher.getId() != null) {
@@ -84,29 +75,19 @@ public class TeacherService {
         }
     }
 
-    /**
-     * Метод для обновления информации о преподавателе в базе данных.
-     * @param teacherDto - объект DTO преподавателя, который нужно обновить
-     * @return - Map, содержащая статус HTTP и объект DTO преподавателя, если преподаватель успешно обновлен
-     */
     public Map<Integer, TeacherDto> updateTeacher(TeacherDto teacherDto) {
         Map<Integer, TeacherDto> jsonResponse = new HashMap<>();
         Teacher teacher = TeacherMapper.mapTeacher.fromDto(teacherDto);
         try {
             teacherDao.update(teacher);
         } catch (EntityNotFoundException e) {
-            throw new RuntimeException(e);
+            logger.error(e.getMessage(), e);
         }
         teacherDto = TeacherMapper.mapTeacher.toDto(teacher);
         jsonResponse.put(HttpServletResponse.SC_OK, teacherDto);
         return jsonResponse;
     }
 
-    /**
-     * Метод для удаления преподавателя из базы данных по его идентификатору.
-     * @param id - идентификатор преподавателя, который нужно удалить
-     * @return - строка с сообщением о результате удаления преподавателя
-     */
     public String removeTeacher(Long id) {
         String jsonResponse = "";
         Optional<Teacher> teacher = teacherDao.getById(id);
@@ -114,7 +95,7 @@ public class TeacherService {
             try {
                 teacherDao.remove(teacher.get());
             } catch (EntityNotFoundException e) {
-                throw new RuntimeException(e);
+                logger.error(e.getMessage(), e);
             }
             jsonResponse = "Teacher " + id + " removed";
         } else {
@@ -122,5 +103,4 @@ public class TeacherService {
         }
         return jsonResponse;
     }
-
 }
