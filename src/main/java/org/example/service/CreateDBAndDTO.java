@@ -10,7 +10,7 @@ import java.sql.Statement;
 public class CreateDBAndDTO {
     private static final Logger logger = LoggerFactory.getLogger(CourseDao.class);
     private static final String SQL_CREATE_DB = "CREATE DATABASE dbmelody CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;;";
-    private static final String SQL_DROP_DB = "DROP DATABASE dbmelody;";
+    private static final String SQL_DROP_DB = "DROP DATABASE IF EXISTS dbmelody;";
 
     private final DBConnector dbConnector;
 
@@ -74,7 +74,6 @@ public class CreateDBAndDTO {
             statement.execute(sqlOneToManyTeacherCourses);
 
             logger.info("База данных успешно создана");
-
         } catch (SQLException ex) {
             logger.error(ex.getMessage(), ex);
         }

@@ -1,8 +1,15 @@
 package org.example.dto;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
 public class CourseDto {
     private Long id;
     private String name;
+    private Set<StudentDto> students = new HashSet<>();
+    private TeacherDto teacher = new TeacherDto();
 
     public CourseDto() {
     }
@@ -27,11 +34,22 @@ public class CourseDto {
         this.name = name;
     }
 
+    public TeacherDto getTeacherDto() {
+        return teacher;
+    }
+
+    public void setTeacherDto(TeacherDto teacherDto) {
+        this.teacher = teacherDto;
+    }
+
     @Override
     public String toString() {
-        return "Course{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                '}';
+        if (teacher == null) {
+            return "id: " + id +
+                    ", name: " + name +
+                    ", teacher: " + " не назначен";
+        } else return "id: " + id +
+                ", name: " + name +
+                ", teacher: " + "id: " + teacher.getId() + " name: " + teacher.getName();
     }
 }

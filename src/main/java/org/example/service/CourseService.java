@@ -1,15 +1,15 @@
 package org.example.service;
 
+import jakarta.servlet.http.HttpServletResponse;
 import org.example.dao.CourseDao;
 import org.example.exceptions.EntityNotFoundException;
 import org.example.exceptions.ExistEntityException;
 import org.example.dto.CourseDto;
 import org.example.mappers.CourseMapper;
+import org.example.mappers.TeacherMapper;
 import org.example.models.Course;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.servlet.http.HttpServletResponse;
 import java.util.*;
 
 public class CourseService {
@@ -30,6 +30,7 @@ public class CourseService {
         Optional<Course> course = courseDao.getById(id);
         if (course.isPresent()) {
             courseDto = CourseMapper.mapCourse.toDto(course.get());
+            courseDto.setTeacherDto(TeacherMapper.mapTeacher.toDto(course.get().getTeacher()));
             jsonResponse.put(HttpServletResponse.SC_FOUND, courseDto);
         } else {
             jsonResponse.put(HttpServletResponse.SC_NOT_FOUND, null);

@@ -1,11 +1,12 @@
 package org.example.models;
 
+import java.util.HashSet;
 import java.util.Set;
 
 public class Course {
     private Long id;
     private String name;
-    private Set<Student> students;
+    private Set<Student> students = new HashSet<>();
     private Teacher teacher;
 
     public Course() {
@@ -45,6 +46,17 @@ public class Course {
 
     public void setTeacher(Teacher teacher) {
         this.teacher = teacher;
+    }
+
+    @Override
+    public String toString() {
+        if (teacher == null) {
+            return "id: " + id +
+                    ", name: " + name +
+                    ", teacher: " + " не назначен";
+        } else return "id: " + id +
+                ", name: " + name +
+                ", teacher: " + "id: " + teacher.getId() + " name: " + teacher.getName();
     }
 
 }

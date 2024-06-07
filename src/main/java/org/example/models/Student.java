@@ -1,4 +1,5 @@
 package org.example.models;
+import java.util.HashSet;
 import java.util.Set;
 
 public class Student {
@@ -7,7 +8,7 @@ public class Student {
     private String name;
     private int age;
 
-    private Set<Course> courses;
+    private Set<Course> courses = new HashSet<>();
 
     public Student() {
     }
@@ -61,6 +62,17 @@ public class Student {
     public void setEmail(String email) {
         this.email = email;
     }
-
+    @Override
+    public String toString() {
+        Set<String> courserName = new HashSet<>();
+        courses.forEach(courses ->{
+            courserName.add(courses.getName());
+        });
+        return  "id= " + id +
+                ", email= " + email +
+                ", name= " + name +
+                ", age= " + age +
+                ", courses= " + courserName;
+    }
 
 }

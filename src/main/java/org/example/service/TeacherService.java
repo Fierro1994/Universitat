@@ -1,5 +1,6 @@
 package org.example.service;
 
+import jakarta.servlet.http.HttpServletResponse;
 import org.example.dao.TeacherDao;
 import org.example.exceptions.EntityNotFoundException;
 import org.example.exceptions.ExistEntityException;
@@ -8,8 +9,6 @@ import org.example.mappers.TeacherMapper;
 import org.example.models.Teacher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.servlet.http.HttpServletResponse;
 import java.util.*;
 
 

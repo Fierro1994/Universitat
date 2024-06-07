@@ -1,5 +1,6 @@
 package org.example.models;
 
+import java.util.HashSet;
 import java.util.Set;
 
 public class Teacher {
@@ -7,7 +8,7 @@ public class Teacher {
     private String email;
     private String name;
 
-    private Set<Course> courses;
+    private Set<Course> courses = new HashSet<>();
 
     public Teacher() {
     }
