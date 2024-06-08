@@ -14,7 +14,6 @@ public class MyAppContextListener implements ServletContextListener {
         ServletContextListener.super.contextInitialized(sce);
         CreateDBAndDTO createDBAndDTO = new CreateDBAndDTO();
         createDBAndDTO.createDataBase();
-
     }
 
     @Override
