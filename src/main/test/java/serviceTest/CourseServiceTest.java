@@ -1,6 +1,5 @@
 package serviceTest;
 
-import jakarta.servlet.http.HttpServletResponse;
 import org.example.dao.CourseDao;
 import org.example.exceptions.EntityNotFoundException;
 import org.example.exceptions.ExistEntityException;
@@ -14,6 +13,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.*;
 

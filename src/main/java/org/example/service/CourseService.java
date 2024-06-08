@@ -1,6 +1,5 @@
 package org.example.service;
 
-import jakarta.servlet.http.HttpServletResponse;
 import org.example.dao.CourseDao;
 import org.example.exceptions.EntityNotFoundException;
 import org.example.exceptions.ExistEntityException;
@@ -10,6 +9,8 @@ import org.example.mappers.TeacherMapper;
 import org.example.models.Course;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.servlet.http.HttpServletResponse;
 import java.util.*;
 
 public class CourseService {

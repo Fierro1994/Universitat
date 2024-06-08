@@ -1,6 +1,5 @@
 package serviceTest;
 
-import jakarta.servlet.http.HttpServletResponse;
 import org.example.exceptions.EntityNotFoundException;
 import org.example.dao.TeacherDao;
 import org.example.exceptions.ExistEntityException;
@@ -13,6 +12,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+
+import javax.servlet.http.HttpServletResponse;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
