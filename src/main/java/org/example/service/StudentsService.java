@@ -58,7 +58,6 @@ public class StudentsService {
         } else {
             jsonResponse.put(HttpServletResponse.SC_NOT_FOUND, null);
         }
-
         return jsonResponse;
     }
 
