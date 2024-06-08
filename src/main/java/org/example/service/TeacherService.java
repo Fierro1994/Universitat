@@ -52,7 +52,6 @@ public class TeacherService {
         } else {
             jsonResponse.put(HttpServletResponse.SC_NOT_FOUND, null);
         }
-
         return jsonResponse;
     }
 
